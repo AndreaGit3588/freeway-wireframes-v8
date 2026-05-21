@@ -63,7 +63,7 @@ body { font-family: 'Plus Jakarta Sans', sans-serif; background: #EEEBE4; color:
 .sot-meta strong { color: var(--lav); }
 
 /* CONTENT AREA */
-.content { padding: 28px 32px; min-height: 600px; }
+.content { padding: 28px 28px; min-height: 600px; }
 .content-head { margin-bottom: 28px; }
 .content-title { font-size: 26px; font-weight: 700; color: var(--navy); letter-spacing: -.6px; margin-bottom: 4px; }
 .content-sub { font-size: 14px; color: rgba(16,12,46,.5); }
@@ -78,13 +78,14 @@ body { font-family: 'Plus Jakarta Sans', sans-serif; background: #EEEBE4; color:
 .module-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
 
 /* STANDARD MODULE CARD */
-.module-card { background: rgba(255,255,255,.7); border: 1px solid rgba(16,12,46,.08); border-radius: 16px; padding: 20px; cursor: pointer; transition: all .25s; position: relative; overflow: hidden; }
+.module-card { background: rgba(255,255,255,.7); border: 1px solid rgba(16,12,46,.08); border-radius: 18px; padding: 20px; cursor: pointer; transition: all .25s; position: relative; overflow: hidden; }
 .module-card:hover { background: rgba(255,255,255,.9); border-color: rgba(16,12,46,.12); box-shadow: 0 4px 16px rgba(16,12,46,.06); }
 
 /* RECOMMENDED MODULE — glowing outline state */
 .module-card.recommended {
   background: rgba(255,255,255,.95);
   border: 2px solid var(--lav);
+  border-radius: 18px;
   box-shadow:
     0 0 0 4px rgba(83,74,183,.1),
     0 0 24px rgba(83,74,183,.2),
@@ -125,7 +126,7 @@ body { font-family: 'Plus Jakarta Sans', sans-serif; background: #EEEBE4; color:
 .module-prog-text { font-size: 11px; color: rgba(16,12,46,.4); margin-top: 4px; }
 
 /* ENROLL CTA on recommended card */
-.module-enroll-btn { width: 100%; margin-top: 14px; padding: 10px; border-radius: 10px; background: linear-gradient(135deg,#534AB7,#9384FB); border: none; color: #fff; font-family: inherit; font-size: 13px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 7px; transition: opacity .2s; }
+.module-enroll-btn { width: 100%; margin-top: 14px; padding: 10px; border-radius: 999px; background: linear-gradient(135deg,#534AB7,#9384FB); border: none; color: #fff; font-family: inherit; font-size: 13px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 7px; transition: opacity .2s; }
 .module-enroll-btn:hover { opacity: .9; }
 .module-enroll-btn svg { width: 14px; height: 14px; }
 </style>
