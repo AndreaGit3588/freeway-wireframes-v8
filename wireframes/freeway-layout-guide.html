@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Freeway — Layout Guide</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Plus Jakarta Sans', sans-serif; background: #E8E4DC; color: #100C2E; }
+
+.page { max-width: 900px; margin: 0 auto; padding: 48px 32px 80px; }
+.page-title { font-size: 28px; font-weight: 700; color: #100C2E; letter-spacing: -.6px; margin-bottom: 32px; }
+
+/* CARD */
+.guide-card { background: #fff; border-radius: 16px; padding: 28px 28px 32px; margin-bottom: 28px; border: 1px solid rgba(16,12,46,.08); }
+.card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; }
+.card-logo { display: flex; align-items: center; gap: 6px; }
+.card-logo-fr { font-size: 13px; font-weight: 800; background: linear-gradient(135deg,#2CE4CC,#0FA882); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+.card-logo-wm { font-size: 10px; font-weight: 700; color: #100C2E; }
+.card-year { font-size: 10px; color: rgba(16,12,46,.35); }
+.card-title { font-size: 16px; font-weight: 700; color: #100C2E; letter-spacing: -.3px; margin-bottom: 4px; }
+.card-desc { font-size: 11px; color: rgba(16,12,46,.45); line-height: 1.6; margin-bottom: 24px; max-width: 480px; }
+
+/* ANNOTATION SYSTEM */
+.ann { font-size: 9px; font-weight: 700; color: #534AB7; font-family: 'Plus Jakarta Sans', sans-serif; }
+.ann-line-h { position: absolute; height: 1px; background: rgba(83,74,183,.5); }
+.ann-line-v { position: absolute; width: 1px; background: rgba(83,74,183,.5); }
+.ann-arrow { color: #534AB7; font-size: 8px; }
+
+/* ── LAYOUT FRAMES ── */
+.layout-section { margin-bottom: 32px; }
+.layout-label-row { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 8px; }
+.layout-name { font-size: 11px; font-weight: 700; color: #534AB7; }
+.layout-size { font-size: 10px; color: rgba(16,12,46,.4); font-family: monospace; }
+
+/* FRAME */
+.frame { position: relative; border: 1px solid rgba(83,74,183,.35); border-radius: 4px; background: #F0EDE6; }
+.frame-dim { font-size: 11px; font-weight: 600; color: rgba(16,12,46,.3); position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); letter-spacing: -.2px; }
+
+/* Grid columns */
+.col-block { position: absolute; background: rgba(83,74,183,.08); border-left: 1px dashed rgba(83,74,183,.25); border-right: 1px dashed rgba(83,74,183,.25); top: 0; bottom: 0; }
+
+/* Measurement arrows */
+.m-label { position: absolute; font-size: 8px; font-weight: 700; color: #534AB7; white-space: nowrap; }
+.m-line { position: absolute; background: rgba(83,74,183,.6); }
+.m-h { height: 1px; }
+.m-v { width: 1px; }
+.m-cap-l::before { content: ''; position: absolute; left: 0; top: -3px; width: 1px; height: 7px; background: rgba(83,74,183,.6); }
+.m-cap-r::after { content: ''; position: absolute; right: 0; top: -3px; width: 1px; height: 7px; background: rgba(83,74,183,.6); }
+.m-cap-t::before { content: ''; position: absolute; top: 0; left: -3px; width: 7px; height: 1px; background: rgba(83,74,183,.6); }
+.m-cap-b::after { content: ''; position: absolute; bottom: 0; left: -3px; width: 7px; height: 1px; background: rgba(83,74,183,.6); }
+
+/* ── SPACING SECTION ── */
+.spacing-grid { display: flex; flex-direction: column; gap: 8px; }
+.sp-row { display: flex; align-items: center; gap: 12px; }
+.sp-bar { height: 12px; background: rgba(83,74,183,.2); border-radius: 3px; flex-shrink: 0; }
+.sp-label { font-size: 10px; color: rgba(16,12,46,.5); font-family: monospace; min-width: 28px; }
+.sp-use { font-size: 10px; color: rgba(16,12,46,.38); }
+
+/* ── MARGINS ── */
+.margin-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+.margin-item { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.margin-box { position: relative; border-radius: 6px; overflow: hidden; }
+.margin-inner { background: #E8E4DC; position: absolute; border-radius: 3px; }
+.margin-outer { background: rgba(83,74,183,.15); }
+.margin-label { font-size: 10px; font-weight: 700; color: rgba(16,12,46,.6); }
+
+/* ── RADIUS ── */
+.radius-grid { display: flex; flex-wrap: wrap; gap: 16px; align-items: flex-end; }
+.radius-item { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.radius-box { background: rgba(83,74,183,.12); border: 1px solid rgba(83,74,183,.25); }
+.radius-label { font-size: 10px; font-weight: 700; color: rgba(16,12,46,.55); }
+.radius-use { font-size: 9px; color: rgba(16,12,46,.35); text-align: center; max-width: 70px; }
+
+/* COLUMNS LEGEND */
+.col-legend { display: flex; align-items: center; gap: 8px; margin-top: 10px; }
+.col-legend-box { width: 14px; height: 10px; background: rgba(83,74,183,.12); border: 1px dashed rgba(83,74,183,.3); border-radius: 2px; }
+.col-legend-text { font-size: 9px; color: rgba(16,12,46,.4); }
+
+/* SECTION DIVIDER */
+.section-divider { height: 1px; background: rgba(16,12,46,.07); margin: 28px 0; }
+
+/* MOBILE FRAMES */
+.mobile-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+.mobile-frame { position: relative; border: 1px solid rgba(83,74,183,.35); border-radius: 8px; background: #F0EDE6; }
+
+/* BOTTOM SPECS */
+.specs-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 32px; }
+.spec-section-title { font-size: 11px; font-weight: 700; color: rgba(16,12,46,.55); margin-bottom: 14px; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="page-title">Layouts Guide</div>
+
+  <div class="guide-card">
+
+    <!-- Header -->
+    <div class="card-header">
+      <div class="card-logo">
+        <span class="card-logo-fr">fr</span>
+        <span class="card-logo-wm">freeway</span>
+      </div>
+      <div class="card-year">2025</div>
+    </div>
+    <div class="card-title">Layouts Guide</div>
+    <div class="card-desc">
+      This section provides a detailed guide to the spacing system, grid structure, and border radius rules used throughout Freeway.
+      Maintaining consistent layout principles is essential for visual harmony, usability, and scalability.
+      Following this guide ensures that all components and screens align with a unified design language.
+    </div>
+
+    <!-- ── 1. DASHBOARD LAYOUT ── -->
+    <div class="layout-section">
+      <div class="layout-label-row">
+        <div class="layout-name">Dashboard Layout (Home, Academy, Network)</div>
+        <div class="layout-size">1440 × 1024</div>
+      </div>
+      <div class="frame" style="height:320px">
+
+        <!-- NAV bar -->
+        <div style="position:absolute;top:0;left:0;right:0;height:32px;background:rgba(83,74,183,.08);border-bottom:1px dashed rgba(83,74,183,.25)">
+          <div style="font-size:8px;font-weight:600;color:rgba(83,74,183,.6);padding:10px 14px">Navigation bar — sticky, height: 64px</div>
+        </div>
+
+        <!-- Sidebar col -->
+        <div style="position:absolute;left:0;top:32px;bottom:0;width:152px;background:rgba(83,74,183,.06);border-right:1px dashed rgba(83,74,183,.25)">
+          <div class="frame-dim" style="font-size:9px;left:50%;transform:translateX(-50%) translateY(-50%)">Sidebar<br>220px</div>
+        </div>
+
+        <!-- Content area -->
+        <div style="position:absolute;left:152px;top:32px;right:0;bottom:0;background:rgba(83,74,183,.03)">
+          <div class="frame-dim" style="font-size:11px">Content area<br>1000px</div>
+        </div>
+
+        <!-- Margin annotations -->
+        <!-- Left margin -->
+        <div style="position:absolute;left:0;bottom:14px;width:24px;height:1px;background:rgba(83,74,183,.5)"></div>
+        <div style="position:absolute;left:14px;bottom:10px" class="m-label">48px</div>
+
+        <!-- Right margin -->
+        <div style="position:absolute;right:0;bottom:14px;width:24px;height:1px;background:rgba(83,74,183,.5)"></div>
+        <div style="position:absolute;right:14px;bottom:10px" class="m-label">48px</div>
+
+        <!-- Nav height -->
+        <div style="position:absolute;right:10px;top:0;width:1px;height:32px;background:rgba(83,74,183,.5)"></div>
+        <div style="position:absolute;right:14px;top:8px" class="m-label">64px</div>
+
+        <!-- Sidebar width -->
+        <div style="position:absolute;top:36px;left:0;width:152px;height:1px;background:rgba(83,74,183,.4)"></div>
+        <div style="position:absolute;top:40px;left:40px" class="m-label">220px</div>
+
+        <!-- Content width -->
+        <div style="position:absolute;top:36px;left:152px;right:0;height:1px;background:rgba(83,74,183,.4)"></div>
+        <div style="position:absolute;top:40px;left:55%;transform:translateX(-50%)" class="m-label">Max 1220px · 1000px content</div>
+
+        <!-- Vertical gap -->
+        <div style="position:absolute;left:160px;top:50px;width:1px;height:24px;background:rgba(83,74,183,.5)"></div>
+        <div style="position:absolute;left:164px;top:56px" class="m-label">24px gap</div>
+
+        <!-- Dim -->
+        <div class="frame-dim" style="top:auto;bottom:20px;left:auto;right:auto;transform:none;font-size:10px;color:rgba(16,12,46,.18);left:50%;transform:translateX(-50%)">1440 × 1024</div>
+
+        <div class="col-legend" style="position:absolute;bottom:6px;left:8px">
+          <div class="col-legend-box"></div>
+          <div class="col-legend-text">Sidebar — 220px fixed · Content area fluid · Max-width 1220px · Side padding 48px · Top 36px · Bottom 80px</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── 2. MOBILE LAYOUT ── -->
+    <div class="layout-section" style="display:grid;grid-template-columns:1fr 200px;gap:20px;align-items:start">
+      <div style="grid-column:1/3">
+        <div class="layout-label-row">
+          <div class="layout-name">Mobile Layout</div>
+          <div class="layout-size">390 × 844</div>
+        </div>
+      </div>
+
+      <!-- Desktop wide col info -->
+      <div>
+        <div class="frame" style="height:260px">
+          <!-- Nav -->
+          <div style="position:absolute;top:0;left:0;right:0;height:28px;background:rgba(83,74,183,.08);border-bottom:1px dashed rgba(83,74,183,.25)">
+            <div style="font-size:7.5px;font-weight:600;color:rgba(83,74,183,.6);padding:8px 10px">Nav — 56px</div>
+          </div>
+          <!-- Tab bar -->
+          <div style="position:absolute;top:28px;left:0;right:0;height:20px;background:rgba(83,74,183,.06);border-bottom:1px dashed rgba(83,74,183,.2)">
+            <div style="font-size:7px;color:rgba(83,74,183,.5);padding:5px 8px">Tab pills — 44px scroll</div>
+          </div>
+          <!-- Content -->
+          <div style="position:absolute;top:48px;left:0;right:0;bottom:0;background:rgba(83,74,183,.03)">
+            <div class="frame-dim" style="font-size:9px">Single column<br>content</div>
+          </div>
+          <!-- Margin lines -->
+          <div style="position:absolute;left:0;bottom:12px;width:16px;height:1px;background:rgba(83,74,183,.5)"></div>
+          <div style="position:absolute;left:4px;bottom:7px" class="m-label">16px</div>
+          <div style="position:absolute;right:0;bottom:12px;width:16px;height:1px;background:rgba(83,74,183,.5)"></div>
+          <div style="position:absolute;right:4px;bottom:7px" class="m-label">16px</div>
+          <div class="frame-dim" style="top:auto;bottom:4px;left:auto;right:auto;transform:none;font-size:9px;color:rgba(16,12,46,.18);left:50%;transform:translateX(-50%)">390 × 844</div>
+        </div>
+        <div class="col-legend" style="margin-top:8px">
+          <div class="col-legend-box"></div>
+          <div class="col-legend-text">Single column · 16px side padding · Stacked cards · Tabs collapse to icon-only</div>
+        </div>
+      </div>
+
+      <!-- Mobile tall frame -->
+      <div>
+        <div class="frame" style="height:260px;width:140px">
+          <div style="position:absolute;top:0;left:0;right:0;height:22px;background:rgba(83,74,183,.08);border-bottom:1px dashed rgba(83,74,183,.25)">
+            <div style="font-size:6.5px;padding:7px 8px;color:rgba(83,74,183,.6);font-weight:600">Nav</div>
+          </div>
+          <div style="position:absolute;top:22px;left:0;right:0;height:16px;background:rgba(83,74,183,.06);border-bottom:1px dashed rgba(83,74,183,.2)">
+            <div style="font-size:6px;padding:5px 8px;color:rgba(83,74,183,.5)">Tabs</div>
+          </div>
+          <div style="position:absolute;top:38px;left:0;right:0;bottom:0;background:rgba(83,74,183,.03)">
+            <div class="frame-dim" style="font-size:8px">390×844</div>
+          </div>
+          <!-- side margins -->
+          <div style="position:absolute;left:0;top:50%;width:8px;height:1px;background:rgba(83,74,183,.5)"></div>
+          <div style="position:absolute;left:2px;top:calc(50% - 8px)" class="m-label" style="font-size:7px">16px</div>
+          <div style="position:absolute;right:0;top:50%;width:8px;height:1px;background:rgba(83,74,183,.5)"></div>
+        </div>
+        <div style="font-size:9px;color:rgba(16,12,46,.45);margin-top:6px;text-align:center">390 × 844</div>
+      </div>
+    </div>
+
+    <!-- ── 3. OPPORTUNITIES LAYOUT ── -->
+    <div class="layout-section">
+      <div class="layout-label-row">
+        <div class="layout-name">Opportunities Layout — Banner + List</div>
+        <div class="layout-size">1440 × 1024</div>
+      </div>
+      <div class="frame" style="height:280px">
+        <!-- Nav -->
+        <div style="position:absolute;top:0;left:0;right:0;height:28px;background:rgba(83,74,183,.08);border-bottom:1px dashed rgba(83,74,183,.25)">
+          <div style="font-size:8px;padding:8px 14px;color:rgba(83,74,183,.6);font-weight:600">Nav — 64px</div>
+        </div>
+
+        <!-- Left margin -->
+        <div style="position:absolute;left:0;top:28px;bottom:0;width:40px;background:rgba(83,74,183,.04)"></div>
+        <!-- Right margin -->
+        <div style="position:absolute;right:0;top:28px;bottom:0;width:40px;background:rgba(83,74,183,.04)"></div>
+
+        <!-- Dark banner -->
+        <div style="position:absolute;left:40px;right:40px;top:40px;height:90px;background:rgba(13,15,43,.85);border-radius:6px 6px 0 0">
+          <div style="padding:12px 16px">
+            <div style="font-size:7.5px;font-weight:700;color:rgba(224,125,189,.7);letter-spacing:1.2px;text-transform:uppercase;margin-bottom:6px">Your career path</div>
+            <div style="display:flex;gap:0;margin-bottom:8px">
+              <div style="flex:1;text-align:center">
+                <div style="font-size:6px;color:rgba(255,255,255,.35);margin-bottom:3px">WHERE YOU ARE</div>
+                <div style="font-size:8px;font-weight:600;color:#fff">Senior PM</div>
+              </div>
+              <div style="flex:1;text-align:center">
+                <div style="font-size:6px;color:rgba(255,255,255,.35);margin-bottom:3px">TARGETING</div>
+                <div style="font-size:8px;color:rgba(255,255,255,.5)">Head of Product</div>
+              </div>
+              <div style="flex:1;text-align:center">
+                <div style="font-size:6px;color:rgba(255,255,255,.35);margin-bottom:3px">WHERE YOU'RE GOING</div>
+                <div style="font-size:8px;font-weight:600;color:#E07DBD">Founding role</div>
+              </div>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;padding-top:6px;border-top:.5px solid rgba(255,255,255,.08)">
+              <div style="flex:1;height:3px;border-radius:999px;background:rgba(255,255,255,.1);overflow:hidden"><div style="width:38%;height:100%;background:linear-gradient(90deg,#9384FB,#E07DBD)"></div></div>
+              <div style="font-size:6.5px;color:rgba(255,255,255,.6);white-space:nowrap"><strong style="color:#fff">38%</strong> toward founding role</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- List block -->
+        <div style="position:absolute;left:40px;right:40px;top:130px;bottom:24px;background:#fff;border-radius:0 0 6px 6px;overflow:hidden">
+          <!-- Bar -->
+          <div style="padding:6px 14px;background:rgba(83,74,183,.04);border-bottom:1px solid rgba(16,12,46,.07);display:flex;justify-content:space-between;align-items:center">
+            <div style="font-size:7px;font-weight:700;color:rgba(16,12,46,.38);letter-spacing:1px;text-transform:uppercase">Matched for you</div>
+            <div style="display:flex;gap:3px">
+              <div style="padding:2px 6px;border-radius:999px;background:rgba(255,255,255,.8);border:1px solid rgba(16,12,46,.1);font-size:6px;font-weight:600;color:rgba(16,12,46,.6)">Sort</div>
+              <div style="padding:2px 6px;border-radius:999px;background:rgba(255,255,255,.8);border:1px solid rgba(16,12,46,.1);font-size:6px;font-weight:600;color:rgba(16,12,46,.6)">Filter</div>
+            </div>
+          </div>
+          <!-- Rows -->
+          <div style="padding:6px 14px;display:flex;gap:8px;align-items:center;border-bottom:1px solid rgba(16,12,46,.06)">
+            <div style="font-size:6.5px;color:rgba(16,12,46,.25);width:14px">01</div>
+            <div style="width:16px;height:16px;border-radius:4px;background:linear-gradient(135deg,#534AB7,#100C2E)"></div>
+            <div style="flex:1"><div style="font-size:7.5px;font-weight:600;color:#100C2E">Head of Product</div><div style="font-size:6.5px;color:rgba(16,12,46,.45)">Meridian Health · Series B · Remote</div></div>
+            <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="rgba(16,12,46,.22)" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </div>
+          <div style="padding:6px 14px;display:flex;gap:8px;align-items:center;border-bottom:1px solid rgba(16,12,46,.06)">
+            <div style="font-size:6.5px;color:rgba(16,12,46,.25);width:14px">02</div>
+            <div style="width:16px;height:16px;border-radius:4px;background:linear-gradient(135deg,#9384FB,#534AB7)"></div>
+            <div style="flex:1"><div style="font-size:7.5px;font-weight:600;color:#100C2E">VP Product</div><div style="font-size:6.5px;color:rgba(16,12,46,.45)">Arclight Labs · Seed · San Francisco</div></div>
+            <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="rgba(16,12,46,.22)" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </div>
+          <div style="padding:6px 14px;display:flex;justify-content:flex-end;border-top:1px solid rgba(16,12,46,.06);position:absolute;bottom:0;left:0;right:0">
+            <span style="font-size:7px;font-weight:600;color:#534AB7">View all 12 →</span>
+          </div>
+        </div>
+
+        <!-- Annotations -->
+        <div style="position:absolute;left:0;top:60px;width:42px;height:1px;background:rgba(83,74,183,.5)"></div>
+        <div style="position:absolute;left:2px;top:52px" class="m-label">48px</div>
+        <div style="position:absolute;right:0;top:60px;width:42px;height:1px;background:rgba(83,74,183,.5)"></div>
+        <div style="position:absolute;right:2px;top:52px" class="m-label">48px</div>
+
+        <!-- Banner height -->
+        <div style="position:absolute;right:44px;top:40px;width:1px;height:90px;background:rgba(83,74,183,.5)"></div>
+        <div style="position:absolute;right:48px;top:72px" class="m-label">Variable</div>
+
+        <div class="frame-dim" style="top:auto;bottom:4px;left:auto;right:auto;transform:none;font-size:9px;color:rgba(16,12,46,.15);left:50%;transform:translateX(-50%)">1440 × 1024</div>
+      </div>
+      <div class="col-legend">
+        <div class="col-legend-box"></div>
+        <div class="col-legend-text">Dark banner + white list = one connected block · 48px side margin · banner and list share the same border-radius container</div>
+      </div>
+    </div>
+
+    <!-- ── 4. LANDING PAGE LAYOUT ── -->
+    <div class="layout-section">
+      <div class="layout-label-row">
+        <div class="layout-name">Landing Page Layout</div>
+        <div class="layout-size">1440 × 1024</div>
+      </div>
+      <div class="frame" style="height:300px">
+
+        <!-- Left margin -->
+        <div style="position:absolute;left:0;top:0;bottom:0;width:44px;background:rgba(83,74,183,.04)"></div>
+        <!-- Right margin -->
+        <div style="position:absolute;right:0;top:0;bottom:0;width:44px;background:rgba(83,74,183,.04)"></div>
+
+        <!-- Hero copy col -->
+        <div style="position:absolute;left:44px;top:20px;width:45%;bottom:20px;background:rgba(83,74,183,.06);border:1px dashed rgba(83,74,183,.2);border-radius:4px">
+          <div style="padding:14px">
+            <div style="font-size:6.5px;font-weight:700;color:#534AB7;margin-bottom:6px">fr freeway</div>
+            <div style="font-size:7px;font-weight:700;color:#534AB7;margin-bottom:6px">Launching closed beta</div>
+            <div style="font-size:13px;font-weight:700;color:#100C2E;letter-spacing:-.3px;margin-bottom:6px;line-height:1.1">Where talent<br>meets opportunity</div>
+            <div style="font-size:7px;color:rgba(16,12,46,.55);line-height:1.5;margin-bottom:8px">A vetted, referral-driven community of builders, operators, and founders.</div>
+            <div style="display:flex;flex-direction:column;gap:4px">
+              <div style="display:flex;align-items:center;gap:5px;font-size:6.5px;color:rgba(16,12,46,.6)"><div style="width:6px;height:6px;border-radius:50%;background:#0FA882"></div>Referral-only access</div>
+              <div style="display:flex;align-items:center;gap:5px;font-size:6.5px;color:rgba(16,12,46,.6)"><div style="width:6px;height:6px;border-radius:50%;background:#0FA882"></div>AI-powered matching</div>
+              <div style="display:flex;align-items:center;gap:5px;font-size:6.5px;color:rgba(16,12,46,.6)"><div style="width:6px;height:6px;border-radius:50%;background:#0FA882"></div>Free during beta</div>
+            </div>
+          </div>
+          <div class="frame-dim" style="font-size:8px;bottom:8px;top:auto;color:rgba(83,74,183,.4)">Hero copy — 1fr</div>
+        </div>
+
+        <!-- Form col -->
+        <div style="position:absolute;right:44px;top:20px;width:36%;bottom:20px;background:#fff;border:1px solid rgba(16,12,46,.1);border-radius:8px">
+          <div style="padding:12px 14px">
+            <div style="font-size:6.5px;font-weight:700;color:#7B52C4;letter-spacing:.8px;text-transform:uppercase;margin-bottom:4px">Request access</div>
+            <div style="font-size:9px;font-weight:700;color:#100C2E;margin-bottom:2px">Join the community.</div>
+            <div style="font-size:6.5px;color:rgba(16,12,46,.5);margin-bottom:8px">Built for operators, founders, and employers.</div>
+            <!-- Fields -->
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-bottom:4px">
+              <div style="height:14px;border-radius:4px;background:#F5F2EC;border:.5px solid rgba(16,12,46,.12)"></div>
+              <div style="height:14px;border-radius:4px;background:#F5F2EC;border:.5px solid rgba(16,12,46,.12)"></div>
+            </div>
+            <div style="height:14px;border-radius:4px;background:#F5F2EC;border:.5px solid rgba(16,12,46,.12);margin-bottom:4px"></div>
+            <div style="height:14px;border-radius:4px;background:#F5F2EC;border:.5px solid rgba(16,12,46,.12);margin-bottom:4px"></div>
+            <div style="height:14px;border-radius:4px;background:#F5F2EC;border:.5px solid rgba(16,12,46,.12);margin-bottom:4px"></div>
+            <div style="height:14px;border-radius:4px;background:#F5F2EC;border:.5px solid rgba(16,12,46,.12);margin-bottom:8px"></div>
+            <div style="height:16px;border-radius:999px;background:linear-gradient(135deg,#2A1860,#0FA882);display:flex;align-items:center;justify-content:center">
+              <div style="font-size:6.5px;font-weight:700;color:#fff">Request access →</div>
+            </div>
+          </div>
+          <div class="frame-dim" style="font-size:8px;bottom:6px;top:auto;color:rgba(16,12,46,.2)">Form — 480px fixed · padding 34–48px inside</div>
+        </div>
+
+        <!-- Gap annotation -->
+        <div style="position:absolute;top:50%;left:calc(44px + 45%);right:calc(44px + 36%);height:1px;background:rgba(83,74,183,.5)"></div>
+        <div style="position:absolute;top:calc(50% - 8px);left:calc(44px + 46%)" class="m-label">72px gap</div>
+
+        <!-- Margin annotations -->
+        <div style="position:absolute;left:0;bottom:10px;width:46px;height:1px;background:rgba(83,74,183,.5)"></div>
+        <div style="position:absolute;left:2px;bottom:4px" class="m-label">80px</div>
+        <div style="position:absolute;right:0;bottom:10px;width:46px;height:1px;background:rgba(83,74,183,.5)"></div>
+        <div style="position:absolute;right:2px;bottom:4px" class="m-label">80px</div>
+
+        <div class="frame-dim" style="top:auto;bottom:2px;left:auto;right:auto;transform:none;font-size:9px;color:rgba(16,12,46,.12);left:50%;transform:translateX(-50%)">1440 × 1024</div>
+      </div>
+      <div class="col-legend">
+        <div class="col-legend-box"></div>
+        <div class="col-legend-text">Two-col hero: copy (1fr) + form (480px fixed) · 80px side margin · 72px gap between cols · Max-width 1380px</div>
+      </div>
+    </div>
+
+    <div class="section-divider"></div>
+
+    <!-- ── BOTTOM: SPACING + MARGINS + RADIUS ── -->
+    <div class="specs-grid">
+
+      <!-- SPACING -->
+      <div>
+        <div class="spec-section-title">Spacing</div>
+        <div class="spacing-grid">
+          <div class="sp-row"><div class="sp-bar" style="width:4px"></div><span class="sp-label">4px</span><span class="sp-use">icon gap, tight</span></div>
+          <div class="sp-row"><div class="sp-bar" style="width:8px"></div><span class="sp-label">8px</span><span class="sp-use">inline spacing</span></div>
+          <div class="sp-row"><div class="sp-bar" style="width:12px"></div><span class="sp-label">12px</span><span class="sp-use">chip gap</span></div>
+          <div class="sp-row"><div class="sp-bar" style="width:14px"></div><span class="sp-label">14px</span><span class="sp-use">row items</span></div>
+          <div class="sp-row"><div class="sp-bar" style="width:16px"></div><span class="sp-label">16px</span><span class="sp-use">mobile padding</span></div>
+          <div class="sp-row"><div class="sp-bar" style="width:20px"></div><span class="sp-label">20px</span><span class="sp-use">card padding sm</span></div>
+          <div class="sp-row"><div class="sp-bar" style="width:24px"></div><span class="sp-label">24px</span><span class="sp-use">card padding</span></div>
+          <div class="sp-row"><div class="sp-bar" style="width:28px"></div><span class="sp-label">28px</span><span class="sp-use">section gap</span></div>
+          <div class="sp-row"><div class="sp-bar" style="width:32px"></div><span class="sp-label">32px</span><span class="sp-use">column gap</span></div>
+          <div class="sp-row"><div class="sp-bar" style="width:40px"></div><span class="sp-label">40px</span><span class="sp-use">hero sub</span></div>
+          <div class="sp-row"><div class="sp-bar" style="width:48px"></div><span class="sp-label">48px</span><span class="sp-use">desktop margin</span></div>
+          <div class="sp-row"><div class="sp-bar" style="width:56px"></div><span class="sp-label">56px</span><span class="sp-use">hero padding</span></div>
+          <div class="sp-row"><div class="sp-bar" style="width:64px"></div><span class="sp-label">64px</span><span class="sp-use">nav height · 64px</span></div>
+        </div>
+      </div>
+
+      <!-- MARGINS -->
+      <div>
+        <div class="spec-section-title">Margins &amp; Padding</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          <div style="display:flex;flex-direction:column;align-items:center;gap:4px">
+            <div style="width:60px;height:50px;background:rgba(83,74,183,.12);border-radius:6px;display:flex;align-items:center;justify-content:center">
+              <div style="width:44px;height:34px;background:#EEEBE4;border-radius:3px"></div>
+            </div>
+            <div style="font-size:10px;font-weight:700;color:rgba(16,12,46,.6)">4px</div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:4px">
+            <div style="width:60px;height:50px;background:rgba(83,74,183,.12);border-radius:6px;display:flex;align-items:center;justify-content:center">
+              <div style="width:38px;height:28px;background:#EEEBE4;border-radius:3px"></div>
+            </div>
+            <div style="font-size:10px;font-weight:700;color:rgba(16,12,46,.6)">8px</div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:4px">
+            <div style="width:60px;height:50px;background:rgba(83,74,183,.12);border-radius:6px;display:flex;align-items:center;justify-content:center">
+              <div style="width:32px;height:22px;background:#EEEBE4;border-radius:3px"></div>
+            </div>
+            <div style="font-size:10px;font-weight:700;color:rgba(16,12,46,.6)">12px</div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:4px">
+            <div style="width:60px;height:50px;background:rgba(83,74,183,.12);border-radius:6px;display:flex;align-items:center;justify-content:center">
+              <div style="width:26px;height:16px;background:#EEEBE4;border-radius:3px"></div>
+            </div>
+            <div style="font-size:10px;font-weight:700;color:rgba(16,12,46,.6)">16px</div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:4px">
+            <div style="width:60px;height:50px;background:rgba(83,74,183,.12);border-radius:6px;display:flex;align-items:center;justify-content:center">
+              <div style="width:20px;height:12px;background:#EEEBE4;border-radius:3px"></div>
+            </div>
+            <div style="font-size:10px;font-weight:700;color:rgba(16,12,46,.6)">20px</div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:4px">
+            <div style="width:60px;height:50px;background:rgba(83,74,183,.12);border-radius:6px;display:flex;align-items:center;justify-content:center">
+              <div style="width:14px;height:8px;background:#EEEBE4;border-radius:3px"></div>
+            </div>
+            <div style="font-size:10px;font-weight:700;color:rgba(16,12,46,.6)">24px</div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:4px">
+            <div style="width:60px;height:50px;background:rgba(83,74,183,.12);border-radius:6px;display:flex;align-items:center;justify-content:center">
+              <div style="width:10px;height:6px;background:#EEEBE4;border-radius:2px"></div>
+            </div>
+            <div style="font-size:10px;font-weight:700;color:rgba(16,12,46,.6)">32px</div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:4px">
+            <div style="width:60px;height:50px;background:rgba(83,74,183,.12);border-radius:6px;display:flex;align-items:center;justify-content:center">
+              <div style="width:6px;height:4px;background:#EEEBE4;border-radius:1px"></div>
+            </div>
+            <div style="font-size:10px;font-weight:700;color:rgba(16,12,46,.6)">48px</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RADIUS -->
+      <div>
+        <div class="spec-section-title">Border Radius</div>
+        <div class="radius-grid">
+          <div class="radius-item">
+            <div class="radius-box" style="width:32px;height:32px;border-radius:4px"></div>
+            <div class="radius-label">4px</div>
+            <div class="radius-use">annotation tags</div>
+          </div>
+          <div class="radius-item">
+            <div class="radius-box" style="width:36px;height:36px;border-radius:8px"></div>
+            <div class="radius-label">8px</div>
+            <div class="radius-use">small cards</div>
+          </div>
+          <div class="radius-item">
+            <div class="radius-box" style="width:40px;height:40px;border-radius:10px"></div>
+            <div class="radius-label">10px</div>
+            <div class="radius-use">opp avatar</div>
+          </div>
+          <div class="radius-item">
+            <div class="radius-box" style="width:44px;height:44px;border-radius:12px"></div>
+            <div class="radius-label">12px</div>
+            <div class="radius-use">inputs · selects</div>
+          </div>
+          <div class="radius-item">
+            <div class="radius-box" style="width:48px;height:48px;border-radius:14px"></div>
+            <div class="radius-label">14px</div>
+            <div class="radius-use">pulse bar</div>
+          </div>
+          <div class="radius-item">
+            <div class="radius-box" style="width:52px;height:52px;border-radius:18px"></div>
+            <div class="radius-label">18px</div>
+            <div class="radius-use">cards · lists</div>
+          </div>
+          <div class="radius-item">
+            <div class="radius-box" style="width:56px;height:56px;border-radius:20px"></div>
+            <div class="radius-label">20px</div>
+            <div class="radius-use">inner-card</div>
+          </div>
+          <div class="radius-item">
+            <div class="radius-box" style="width:60px;height:60px;border-radius:22px"></div>
+            <div class="radius-label">24px</div>
+            <div class="radius-use">modals (desktop)<br>24px top only mobile</div>
+          </div>
+          <div class="radius-item">
+            <div class="radius-box" style="width:64px;height:24px;border-radius:999px"></div>
+            <div class="radius-label">999px</div>
+            <div class="radius-use">buttons · pills</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</div>
+</body>
+</html>

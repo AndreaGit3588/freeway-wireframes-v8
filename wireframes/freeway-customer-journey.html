@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Freeway — Customer Journey</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Plus Jakarta Sans', sans-serif; background: #EEEBE4; color: #100C2E; }
+
+.page { max-width: 960px; margin: 0 auto; padding: 56px 40px 100px; }
+
+/* HEADER */
+.page-header { margin-bottom: 52px; }
+.header-logo { display: flex; align-items: center; gap: 8px; margin-bottom: 20px; }
+.logo-fr { font-size: 22px; font-weight: 800; letter-spacing: -.8px; background: linear-gradient(135deg,#2CE4CC,#0FA882); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+.logo-wm { font-size: 16px; font-weight: 700; color: #100C2E; letter-spacing: -.4px; }
+.page-title { font-size: 32px; font-weight: 700; color: #100C2E; letter-spacing: -1px; margin-bottom: 8px; }
+.page-sub { font-size: 15px; color: rgba(16,12,46,.52); line-height: 1.6; max-width: 560px; }
+
+/* USER TYPE TOGGLE */
+.user-toggle { display: flex; gap: 6px; margin-top: 24px; }
+.ut-btn { display: inline-flex; align-items: center; gap: 7px; height: 36px; padding: 0 18px; border-radius: 999px; font-family: inherit; font-size: 13px; font-weight: 600; cursor: pointer; border: 1px solid rgba(16,12,46,.12); background: rgba(255,255,255,.7); color: rgba(16,12,46,.55); transition: all .2s; }
+.ut-btn.active { background: #534AB7; border-color: #534AB7; color: #fff; }
+.ut-btn svg { width: 14px; height: 14px; }
+
+/* PHASE LABEL */
+.phase-row { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; margin-top: 40px; }
+.phase-label { font-size: 10px; font-weight: 700; color: rgba(16,12,46,.38); letter-spacing: 2px; text-transform: uppercase; }
+.phase-line { flex: 1; height: 1px; background: rgba(16,12,46,.1); }
+.phase-badge { display: inline-flex; align-items: center; height: 22px; padding: 0 10px; border-radius: 999px; font-size: 9px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; }
+
+/* STEP CARD */
+.steps { display: flex; flex-direction: column; gap: 0; position: relative; }
+.steps::before { content: ''; position: absolute; left: 28px; top: 20px; bottom: 20px; width: 1px; background: linear-gradient(180deg, rgba(83,74,183,.3), rgba(83,74,183,.1)); z-index: 0; }
+
+.step { display: grid; grid-template-columns: 56px 1fr; gap: 20px; position: relative; z-index: 1; margin-bottom: 8px; }
+.step-node { display: flex; flex-direction: column; align-items: center; gap: 0; }
+.step-dot { width: 20px; height: 20px; border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 700; color: #fff; margin-top: 18px; position: relative; z-index: 2; }
+.step-connector { flex: 1; width: 1px; background: transparent; }
+
+.step-card { background: #fff; border-radius: 16px; border: 1px solid rgba(16,12,46,.09); padding: 18px 20px; box-shadow: 0 1px 2px rgba(16,12,46,.04), 0 4px 14px rgba(16,12,46,.05); }
+.step-card:hover { box-shadow: 0 1px 2px rgba(16,12,46,.05), 0 8px 24px rgba(16,12,46,.09); transform: translateX(2px); transition: all .2s; }
+
+.sc-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 8px; }
+.sc-left { flex: 1; }
+.sc-num { font-size: 9px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; margin-bottom: 4px; }
+.sc-title { font-size: 15px; font-weight: 700; color: #100C2E; letter-spacing: -.25px; }
+.sc-desc { font-size: 13px; color: rgba(16,12,46,.55); line-height: 1.6; margin-bottom: 10px; }
+
+/* File tag */
+.file-tag { display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px; border-radius: 6px; background: rgba(83,74,183,.07); border: .5px solid rgba(83,74,183,.18); font-size: 10px; font-weight: 600; color: #534AB7; font-family: monospace; white-space: nowrap; }
+.file-tag svg { width: 10px; height: 10px; }
+
+/* Action chips */
+.actions-row { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 10px; }
+.action-chip { display: inline-flex; align-items: center; gap: 5px; padding: 3px 9px; border-radius: 999px; font-size: 11px; font-weight: 500; white-space: nowrap; }
+.ac-teal { background: rgba(15,168,130,.1); color: #0FA882; border: .5px solid rgba(15,168,130,.2); }
+.ac-lav { background: rgba(83,74,183,.1); color: #534AB7; border: .5px solid rgba(83,74,183,.2); }
+.ac-pink { background: rgba(195,102,162,.1); color: #C366A2; border: .5px solid rgba(195,102,162,.2); }
+.ac-navy { background: rgba(16,12,46,.07); color: rgba(16,12,46,.6); border: .5px solid rgba(16,12,46,.12); }
+.ac-green { background: rgba(29,158,117,.1); color: #1D9E75; border: .5px solid rgba(29,158,117,.2); }
+
+/* Arrow between steps */
+.step-arrow { text-align: left; padding: 2px 0 2px 56px; color: rgba(16,12,46,.2); font-size: 11px; display: flex; align-items: center; gap: 6px; }
+.step-arrow svg { width: 12px; height: 12px; }
+
+/* DATA NOTE */
+.data-note { display: flex; align-items: flex-start; gap: 8px; padding: 10px 14px; border-radius: 10px; background: rgba(83,74,183,.06); border-left: 3px solid rgba(83,74,183,.3); margin-top: 10px; }
+.data-note svg { width: 13px; height: 13px; color: #534AB7; flex-shrink: 0; margin-top: 1px; }
+.data-note-text { font-size: 11.5px; color: rgba(16,12,46,.55); line-height: 1.5; }
+.data-note-text strong { color: #534AB7; }
+
+/* SCREENS QUICK REF */
+.screens-ref { margin-top: 56px; padding: 28px 28px; background: #fff; border-radius: 18px; border: 1px solid rgba(16,12,46,.09); box-shadow: 0 1px 2px rgba(16,12,46,.04), 0 6px 20px rgba(16,12,46,.05); }
+.sr-title { font-size: 11px; font-weight: 700; color: rgba(16,12,46,.38); letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 18px; }
+.sr-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.sr-item { padding: 12px 14px; border-radius: 12px; border: 1px solid rgba(16,12,46,.08); background: #F5F2EC; }
+.sr-n { font-size: 9px; font-weight: 700; color: rgba(16,12,46,.3); letter-spacing: 1px; margin-bottom: 4px; }
+.sr-name { font-size: 13px; font-weight: 700; color: #100C2E; letter-spacing: -.15px; margin-bottom: 2px; }
+.sr-file { font-size: 10px; color: #534AB7; font-family: monospace; }
+
+/* TOGGLE CONTENT */
+.talent-only { display: block; }
+.employer-only { display: none; }
+
+@media (max-width: 640px) {
+  .page { padding: 36px 20px 60px; }
+  .step { grid-template-columns: 44px 1fr; gap: 12px; }
+  .steps::before { left: 22px; }
+  .sr-grid { grid-template-columns: 1fr 1fr; }
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- HEADER -->
+  <div class="page-header">
+    <div class="header-logo">
+      <span class="logo-fr">fr</span>
+      <span class="logo-wm">freeway</span>
+    </div>
+    <div class="page-title">Customer Journey</div>
+    <div class="page-sub">How the Freeway screens connect end to end — for the dev building this out. Shows user flow, screen transitions, data passed between steps, and what each screen does.</div>
+    <div class="user-toggle">
+      <button class="ut-btn active" onclick="setType('talent',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        Talent / Operator
+      </button>
+      <button class="ut-btn" onclick="setType('employer',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+        Founder / Employer
+      </button>
+    </div>
+  </div>
+
+  <!-- ── PHASE 1: ENTRY ── -->
+  <div class="phase-row">
+    <div class="phase-label">Phase 1</div>
+    <div class="phase-line"></div>
+    <div class="phase-badge" style="background:rgba(44,228,204,.12);color:#0FA882;border:.5px solid rgba(44,228,204,.25)">Entry</div>
+  </div>
+
+  <div class="steps">
+
+    <!-- STEP 1 -->
+    <div class="step">
+      <div class="step-node">
+        <div class="step-dot" style="background:#0FA882">1</div>
+      </div>
+      <div class="step-card">
+        <div class="sc-top">
+          <div class="sc-left">
+            <div class="sc-num" style="color:#0FA882">Step 01</div>
+            <div class="sc-title">Landing page</div>
+          </div>
+          <div class="file-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>freeway-landing.html</div>
+        </div>
+        <div class="sc-desc talent-only">User arrives via referral, social, or direct link. Reads the value prop. Fills out the access request form — first name, last name, email, <strong>referred by (required)</strong>, role, industry.</div>
+        <div class="sc-desc employer-only" style="display:none">Founder or employer arrives via referral. Sees the platform positioned for both sides. Fills same form — selects <strong>"Hiring / Employer"</strong> as role type.</div>
+        <div class="actions-row">
+          <div class="action-chip ac-teal">Form submit</div>
+          <div class="action-chip ac-navy">Referred by — required</div>
+          <div class="action-chip ac-navy">Role dropdown</div>
+          <div class="action-chip ac-navy">Industry dropdown</div>
+        </div>
+        <div class="data-note">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          <div class="data-note-text"><strong>Data collected:</strong> first_name, last_name, email, referred_by, role, industry, timestamp → POST to webhook / Airtable / Google Sheets for review</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="step-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M19 12l-7 7-7-7"/></svg> Team reviews request → sends invite link</div>
+
+    <!-- STEP 2 -->
+    <div class="step">
+      <div class="step-node">
+        <div class="step-dot" style="background:#0FA882">2</div>
+      </div>
+      <div class="step-card">
+        <div class="sc-top">
+          <div class="sc-left">
+            <div class="sc-num" style="color:#0FA882">Step 02</div>
+            <div class="sc-title">Create account</div>
+          </div>
+          <div class="file-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>freeway-auth.html</div>
+        </div>
+        <div class="sc-desc">User clicks invite link, lands on auth screen. Signs up with Google, LinkedIn, or email + password. Account created — success state shown, then redirected to onboarding.</div>
+        <div class="actions-row">
+          <div class="action-chip ac-teal">Google OAuth</div>
+          <div class="action-chip ac-teal">LinkedIn OAuth</div>
+          <div class="action-chip ac-navy">Email + password</div>
+          <div class="action-chip ac-green">→ Redirect to onboarding</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ── PHASE 2: ONBOARDING ── -->
+  <div class="phase-row">
+    <div class="phase-label">Phase 2</div>
+    <div class="phase-line"></div>
+    <div class="phase-badge" style="background:rgba(83,74,183,.12);color:#534AB7;border:.5px solid rgba(83,74,183,.25)">Onboarding</div>
+  </div>
+
+  <div class="steps">
+
+    <!-- STEP 3 -->
+    <div class="step">
+      <div class="step-node">
+        <div class="step-dot" style="background:#534AB7">3</div>
+      </div>
+      <div class="step-card">
+        <div class="sc-top">
+          <div class="sc-left">
+            <div class="sc-num" style="color:#534AB7">Step 03</div>
+            <div class="sc-title">Voice onboarding — 3 steps</div>
+          </div>
+          <div class="file-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>freeway-platform.html</div>
+        </div>
+        <div class="sc-desc talent-only">User speaks answers to 3 questions. AI transcribes and extracts positioning in real time. Takes ~2 minutes. Questions: <em>Walk me through your experience · How would you describe yourself and your current role · What are you trying to accomplish</em></div>
+        <div class="sc-desc employer-only" style="display:none">Employer speaks answers to 3 questions about their company, open roles, and what they're looking for. AI extracts company positioning and talent profile.</div>
+        <div class="actions-row">
+          <div class="action-chip ac-lav">Voice input → transcript</div>
+          <div class="action-chip ac-lav">AI extracts tags</div>
+          <div class="action-chip ac-lav">Positioning generated</div>
+          <div class="action-chip ac-green">→ Signal preview</div>
+        </div>
+        <div class="data-note">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          <div class="data-note-text"><strong>Data passed to next screen:</strong> transcript text, extracted keywords/tags, positioning headline → stored in sessionStorage or user profile object</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="step-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M19 12l-7 7-7-7"/></svg> AI processes transcript → generates profile</div>
+
+    <!-- STEP 4 -->
+    <div class="step">
+      <div class="step-node">
+        <div class="step-dot" style="background:#534AB7">4</div>
+      </div>
+      <div class="step-card">
+        <div class="sc-top">
+          <div class="sc-left">
+            <div class="sc-num" style="color:#534AB7">Step 04</div>
+            <div class="sc-title">Signal preview — "Here's how we read you"</div>
+          </div>
+          <div class="file-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>freeway-signal-preview.html</div>
+        </div>
+        <div class="sc-desc">Dark full-screen reveal. AI shows user their positioning headline, connection tags (keywords), and matched opportunity count. "Thinking" animation → keywords appear → stat cards → CTA to enter dashboard.</div>
+        <div class="actions-row">
+          <div class="action-chip ac-lav">Positioning headline shown</div>
+          <div class="action-chip ac-lav">Connection tags revealed</div>
+          <div class="action-chip ac-navy">Matched opps count</div>
+          <div class="action-chip ac-green">→ Enter your dashboard</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ── PHASE 3: CORE LOOP ── -->
+  <div class="phase-row">
+    <div class="phase-label">Phase 3</div>
+    <div class="phase-line"></div>
+    <div class="phase-badge" style="background:rgba(224,125,189,.12);color:#C366A2;border:.5px solid rgba(224,125,189,.25)">Core loop</div>
+  </div>
+
+  <div class="steps">
+
+    <!-- STEP 5 -->
+    <div class="step">
+      <div class="step-node">
+        <div class="step-dot" style="background:#C366A2">5</div>
+      </div>
+      <div class="step-card">
+        <div class="sc-top">
+          <div class="sc-left">
+            <div class="sc-num" style="color:#C366A2">Step 05</div>
+            <div class="sc-title">Home dashboard</div>
+          </div>
+          <div class="file-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>freeway-dashboard.html</div>
+        </div>
+        <div class="sc-desc talent-only">User's home. One connected block: profile tags at top → "Matched for you" bar with Sort/Filter → 8 opportunity rows → "View all 12" bottom right. Below the block: "Others with your positioning" peer cards.</div>
+        <div class="sc-desc employer-only" style="display:none">Employer's home. Profile shows company type and what they're hiring for. Matched talent profiles replace opportunity rows. Same Sort/Filter pattern.</div>
+        <div class="actions-row">
+          <div class="action-chip ac-pink">Sort modal</div>
+          <div class="action-chip ac-pink">Filter / preferences modal</div>
+          <div class="action-chip ac-navy">Role toggle: Opportunities ↔ Talent</div>
+          <div class="action-chip ac-green">→ Click row → Opportunity detail</div>
+          <div class="action-chip ac-green">→ View all → Opportunities list</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="step-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M19 12l-7 7-7-7"/></svg> User clicks an opportunity row</div>
+
+    <!-- STEP 6 -->
+    <div class="step">
+      <div class="step-node">
+        <div class="step-dot" style="background:#C366A2">6</div>
+      </div>
+      <div class="step-card">
+        <div class="sc-top">
+          <div class="sc-left">
+            <div class="sc-num" style="color:#C366A2">Step 06</div>
+            <div class="sc-title">Opportunities list</div>
+          </div>
+          <div class="file-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>freeway-opportunities-list.html</div>
+        </div>
+        <div class="sc-desc">Full list view. Dark career path banner at top (Senior PM → Head of Product → Founding role, 38% progress). White list block below with 8 rows on page 1, 2 on page 2. Sort + Filter in the list bar.</div>
+        <div class="actions-row">
+          <div class="action-chip ac-pink">Career path banner</div>
+          <div class="action-chip ac-pink">Sort modal</div>
+          <div class="action-chip ac-pink">Filter modal</div>
+          <div class="action-chip ac-navy">Pagination — 8 per page</div>
+          <div class="action-chip ac-green">→ Click row → Opportunity detail</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="step-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M19 12l-7 7-7-7"/></svg> User clicks a specific role</div>
+
+    <!-- STEP 7 -->
+    <div class="step">
+      <div class="step-node">
+        <div class="step-dot" style="background:#C366A2">7</div>
+      </div>
+      <div class="step-card">
+        <div class="sc-top">
+          <div class="sc-left">
+            <div class="sc-num" style="color:#C366A2">Step 07</div>
+            <div class="sc-title">Opportunity detail + gap tracker</div>
+          </div>
+          <div class="file-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>freeway-opportunity-detail.html</div>
+        </div>
+        <div class="sc-desc">Role-specific detail page. Dark banner shows path: where you are → this role → founding role. Left col: 5-step gap tracker (done ✓, in-progress, gap). Gaps surface Academy bridge cards inline. Right col: role details + Apply CTA.</div>
+        <div class="actions-row">
+          <div class="action-chip ac-pink">Gap progress tracker</div>
+          <div class="action-chip ac-lav">Academy bridge — inline modules</div>
+          <div class="action-chip ac-teal">Apply now</div>
+          <div class="action-chip ac-navy">Save role</div>
+          <div class="action-chip ac-green">→ Start module → Academy</div>
+        </div>
+        <div class="data-note">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          <div class="data-note-text"><strong>Key pattern:</strong> Academy is not a separate upsell — it surfaces in context of the gap. "This role needs executive storytelling → Module 1 closes it → Start module" is one inline flow.</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ── PHASE 4: LEARN + CONNECT ── -->
+  <div class="phase-row">
+    <div class="phase-label">Phase 4</div>
+    <div class="phase-line"></div>
+    <div class="phase-badge" style="background:rgba(29,158,117,.12);color:#1D9E75;border:.5px solid rgba(29,158,117,.25)">Learn + Connect</div>
+  </div>
+
+  <div class="steps">
+
+    <!-- STEP 8 -->
+    <div class="step">
+      <div class="step-node">
+        <div class="step-dot" style="background:#1D9E75">8</div>
+      </div>
+      <div class="step-card">
+        <div class="sc-top">
+          <div class="sc-left">
+            <div class="sc-num" style="color:#1D9E75">Step 08</div>
+            <div class="sc-title">Academy</div>
+          </div>
+          <div class="file-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>freeway-academy-v3.html</div>
+        </div>
+        <div class="sc-desc">Left sidebar filter (Browse by track, Format, Duration, Partners). Right content: 2 active bootcamp cards (half visual / half content). Click → modal with module list + Enroll CTA. Two coming-soon placeholders.</div>
+        <div class="actions-row">
+          <div class="action-chip ac-green">Startup Bootcamp</div>
+          <div class="action-chip ac-green">MVP & Capital Bootcamp</div>
+          <div class="action-chip ac-navy">Sidebar filters</div>
+          <div class="action-chip ac-lav">Program modal — view modules</div>
+          <div class="action-chip ac-teal">Enroll now</div>
+        </div>
+        <div class="data-note">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          <div class="data-note-text"><strong>Entry points:</strong> Nav tab → browse all · Opportunity detail → direct to specific module that closes the gap. Both lead to the same Academy screen.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 9 -->
+    <div class="step">
+      <div class="step-node">
+        <div class="step-dot" style="background:#1D9E75">9</div>
+      </div>
+      <div class="step-card">
+        <div class="sc-top">
+          <div class="sc-left">
+            <div class="sc-num" style="color:#1D9E75">Step 09</div>
+            <div class="sc-title">Network — vetted community</div>
+          </div>
+          <div class="file-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>freeway-network-v3.html</div>
+        </div>
+        <div class="sc-desc talent-only">Left sidebar: Vetted community badge, Browse (All / Founders 18 / Operators 22 / Investors 8), Signal match, Location. Right content: 6-card member grid + Happening in the community section. Every member has a purple verified badge.</div>
+        <div class="sc-desc employer-only" style="display:none">Same layout. Employers see operators and founders — can filter by role type to find talent. Connect via referral chain. "Happening in community" shows co-founder lookups, events, cohorts forming.</div>
+        <div class="actions-row">
+          <div class="action-chip ac-green">Connect button</div>
+          <div class="action-chip ac-navy">Sidebar filters</div>
+          <div class="action-chip ac-navy">Referral chain shown</div>
+          <div class="action-chip ac-lav">Community events</div>
+          <div class="action-chip ac-teal">Refer someone →</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ── PHASE 5: OUTCOMES ── -->
+  <div class="phase-row">
+    <div class="phase-label">Phase 5</div>
+    <div class="phase-line"></div>
+    <div class="phase-badge" style="background:rgba(16,12,46,.07);color:rgba(16,12,46,.5);border:.5px solid rgba(16,12,46,.12)">Outcomes</div>
+  </div>
+
+  <div class="steps">
+
+    <div class="step">
+      <div class="step-node">
+        <div class="step-dot" style="background:#100C2E">10</div>
+      </div>
+      <div class="step-card">
+        <div class="sc-top">
+          <div class="sc-left">
+            <div class="sc-num" style="color:rgba(16,12,46,.5)">Step 10</div>
+            <div class="sc-title talent-only">Land the role · grow the community</div>
+            <div class="sc-title employer-only" style="display:none">Hire the right person · grow the community</div>
+          </div>
+        </div>
+        <div class="sc-desc talent-only">User applies to a matched role → 360° feedback loop after interaction (both sides rate). User refers someone new → community grows. Gap closed via Academy → profile strengthened → better matches next cycle.</div>
+        <div class="sc-desc employer-only" style="display:none">Employer connects with matched operator or founder → 360° feedback after interaction. Posts new roles → matched to community members. Refers new employers or talent → community grows.</div>
+        <div class="actions-row">
+          <div class="action-chip ac-teal">Apply to role</div>
+          <div class="action-chip ac-lav">360° feedback — both sides rate</div>
+          <div class="action-chip ac-green">Close Academy gap</div>
+          <div class="action-chip ac-navy">Refer someone in</div>
+          <div class="action-chip ac-pink">Community grows</div>
+        </div>
+        <div class="data-note">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          <div class="data-note-text"><strong>Phase 2 features:</strong> 360° feedback system · Match score logic · "Strong match" / "Stretch" labels · Market rate data · AI career forecasting · Employer-side dashboard</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- SCREEN QUICK REFERENCE -->
+  <div class="screens-ref">
+    <div class="sr-title">Screen files — quick reference</div>
+    <div class="sr-grid">
+      <div class="sr-item">
+        <div class="sr-n">01</div>
+        <div class="sr-name">Landing page</div>
+        <div class="sr-file">freeway-landing.html</div>
+      </div>
+      <div class="sr-item">
+        <div class="sr-n">02</div>
+        <div class="sr-name">Auth — Create account</div>
+        <div class="sr-file">freeway-auth.html</div>
+      </div>
+      <div class="sr-item">
+        <div class="sr-n">03</div>
+        <div class="sr-name">Voice onboarding</div>
+        <div class="sr-file">freeway-platform.html</div>
+      </div>
+      <div class="sr-item">
+        <div class="sr-n">04</div>
+        <div class="sr-name">Signal preview</div>
+        <div class="sr-file">freeway-signal-preview.html</div>
+      </div>
+      <div class="sr-item">
+        <div class="sr-n">05</div>
+        <div class="sr-name">Home dashboard</div>
+        <div class="sr-file">freeway-dashboard.html</div>
+      </div>
+      <div class="sr-item">
+        <div class="sr-n">06</div>
+        <div class="sr-name">Opportunities list</div>
+        <div class="sr-file">freeway-opportunities-list.html</div>
+      </div>
+      <div class="sr-item">
+        <div class="sr-n">07</div>
+        <div class="sr-name">Opportunity detail</div>
+        <div class="sr-file">freeway-opportunity-detail.html</div>
+      </div>
+      <div class="sr-item">
+        <div class="sr-n">08</div>
+        <div class="sr-name">Academy</div>
+        <div class="sr-file">freeway-academy-v3.html</div>
+      </div>
+      <div class="sr-item">
+        <div class="sr-n">09</div>
+        <div class="sr-name">Network</div>
+        <div class="sr-file">freeway-network-v3.html</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+function setType(type, btn) {
+  document.querySelectorAll('.ut-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const isTalent = type === 'talent';
+  document.querySelectorAll('.talent-only').forEach(el => el.style.display = isTalent ? 'block' : 'none');
+  document.querySelectorAll('.employer-only').forEach(el => el.style.display = isTalent ? 'none' : 'block');
+}
+</script>
+</body>
+</html>

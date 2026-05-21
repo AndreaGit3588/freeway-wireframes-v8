@@ -1,0 +1,43 @@
+# Builder.io Code Generation Rules — Freeway
+
+## File Structure
+Place components in `src/components/{feature}/{ComponentName}.tsx`
+Export components from index.ts in each feature directory
+
+## Framework
+Use React with TypeScript. Functional components only.
+
+## Design Tokens
+Import tokens from `src/tokens/colors.ts` and `src/tokens/typography.ts`
+Never hardcode hex values in components — always use token references
+
+## Styling
+Use Tailwind CSS utility classes where possible
+For frosted glass surfaces: apply `backdrop-blur-3xl` + `bg-white/55` + `border border-white/70`
+For atmospheric backgrounds: use fixed positioned pseudo-elements, never inline styles on content elements
+
+## Component Naming
+PascalCase for components: `OpportunityCard`, `GoalChip`, `DockNav`
+kebab-case for files: `opportunity-card.tsx`, `goal-chip.tsx`, `dock-nav.tsx`
+
+## Color Usage
+- Background: always cream (`bg-[#F5F2EC]`)
+- Interactive elements only: pink (`#C366A2`)
+- AI/system signals: lavender (`#534AB7`)
+- Body text: midnight circuit (`#20175C`) at 65–70% opacity
+
+## Typography
+Font: Plus Jakarta Sans (loaded via Google Fonts)
+Icons: Tabler Icons via `@tabler/icons-react`
+
+## Animations
+All transitions: `ease-in-out`
+Minimum duration: 300ms for micro-interactions
+Atmospheric pulses: 20–32s (use CSS `@keyframes`, not JS)
+
+## Anti-patterns (never generate these)
+- White or grey page backgrounds
+- Score displays, leaderboards, progress bars with numerical %
+- Hover effects on non-interactive containers
+- Em dashes in copy
+- "Job seeker", "applicant", "candidate", "resume" language
