@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Freeway — Opportunity Detail + Academy Recommendation</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { min-height: 100vh; }
+body { font-family: 'Plus Jakarta Sans', sans-serif; background: #EEEBE4; color: #100C2E; overflow-x: hidden; }
+:root { --navy:#100C2E; --lav:#534AB7; --lav-lt:#9384FB; --green:#1D9E75; --cream:#F5F2EC; --pink:#C366A2; --pink-lt:#E07DBD; }
+
+/* ATMOS */
+.atmos { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+.atmos .p1 { position: absolute; top: -30%; right: -15%; width: 900px; height: 900px; border-radius: 50%; background: radial-gradient(circle, rgba(147,132,251,.1) 0%, transparent 65%); filter: blur(70px); }
+.atmos .p2 { position: absolute; bottom: -25%; left: -12%; width: 750px; height: 750px; border-radius: 50%; background: radial-gradient(circle, rgba(83,74,183,.07) 0%, transparent 60%); filter: blur(70px); }
+.atmos .grain { position: absolute; inset: 0; opacity: .2; background-image: radial-gradient(circle at 1px 1px, rgba(32,23,92,.02) 1px, transparent 0); background-size: 3px 3px; }
+
+/* NAV */
+.nav { position: sticky; top: 0; z-index: 100; display: flex; align-items: center; justify-content: space-between; padding: 16px 48px; background: rgba(238,235,228,.92); backdrop-filter: blur(30px); border-bottom: 1px solid rgba(16,12,46,.08); }
+.nav-logo img { height: 22px; width: auto; }
+.nav-dock { display: flex; gap: 2px; padding: 4px; border-radius: 999px; background: rgba(255,255,255,.6); border: 1px solid rgba(16,12,46,.08); }
+.nav-tab { display: flex; align-items: center; gap: 6px; padding: 7px 14px; border-radius: 999px; font-size: 12.5px; font-weight: 500; color: rgba(16,12,46,.48); cursor: pointer; transition: all .2s; }
+.nav-tab svg { width: 14px; height: 14px; opacity: .55; }
+.nav-tab.active { background: #fff; color: #100C2E; box-shadow: 0 1px 4px rgba(16,12,46,.08); }
+.nav-tab.active svg { opacity: 1; }
+.nav-tab.dim { opacity: .3; pointer-events: none; }
+.nav-right { display: flex; align-items: center; gap: 8px; }
+.nav-search { display: flex; align-items: center; gap: 8px; height: 34px; padding: 0 14px; border-radius: 999px; background: rgba(255,255,255,.55); border: 1px solid rgba(16,12,46,.08); font-size: 12.5px; color: rgba(16,12,46,.42); }
+.nav-search svg { width: 13px; height: 13px; }
+.nav-icon { width: 34px; height: 34px; border-radius: 50%; background: rgba(255,255,255,.55); border: 1px solid rgba(16,12,46,.08); display: flex; align-items: center; justify-content: center; color: rgba(16,12,46,.5); position: relative; cursor: pointer; }
+.nav-icon svg { width: 15px; height: 15px; }
+.nav-icon .pip { position: absolute; top: 6px; right: 6px; width: 7px; height: 7px; border-radius: 50%; background: var(--lav-lt); border: 1.5px solid #EEEBE4; }
+.nav-av { display: flex; align-items: center; gap: 8px; padding: 4px 12px 4px 4px; border-radius: 999px; background: rgba(255,255,255,.55); border: 1px solid rgba(16,12,46,.08); cursor: pointer; }
+.nav-av .av { width: 26px; height: 26px; border-radius: 50%; background: linear-gradient(135deg,#9384FB,#534AB7); display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; color: #fff; }
+.nav-av .avname { font-size: 12.5px; font-weight: 500; }
+
+/* WORKSPACE */
+.workspace { position: relative; z-index: 1; max-width: 1220px; margin: 0 auto; padding: 36px 48px 80px; }
+
+/* CAREER PATH BANNER */
+.path-banner { position: relative; overflow: hidden; background: linear-gradient(145deg,#0D0F2B,#1a1040); border-radius: 18px 18px 0 0; border: 1px solid rgba(16,12,46,.1); border-bottom: none; }
+.path-banner::before { content:''; position:absolute; top:-80px; right:-60px; width:400px; height:400px; border-radius:50%; background:radial-gradient(circle,rgba(224,125,189,.18),rgba(147,132,251,.06) 50%,transparent 70%); filter:blur(40px); pointer-events:none; }
+.pb-inner { position:relative; padding:26px 32px 22px; }
+.pb-eyebrow { font-size:10px; font-weight:700; color:rgba(224,125,189,.7); letter-spacing:1.8px; text-transform:uppercase; margin-bottom:16px; display:flex; align-items:center; gap:8px; }
+.pb-eyebrow::before { content:''; width:18px; height:1px; background:rgba(224,125,189,.45); }
+.pb-flow { position:relative; display:grid; grid-template-columns:1fr 1fr 1fr; margin-bottom:18px; padding:0 4px; }
+.pb-flow::before { content:''; position:absolute; top:9px; left:16.66%; right:16.66%; height:2px; background:linear-gradient(90deg,rgba(147,132,251,.5),rgba(224,125,189,.3)); z-index:0; }
+.pb-node { display:flex; flex-direction:column; align-items:center; text-align:center; position:relative; z-index:2; }
+.pb-dot { width:20px; height:20px; border-radius:50%; background:rgba(13,15,43,.95); border:2px solid rgba(147,132,251,.9); margin-bottom:10px; box-shadow:0 0 0 5px rgba(83,74,183,.18); }
+.pb-dot.mid { border-color:rgba(147,132,251,.5); background:rgba(32,23,92,.9); width:14px; height:14px; margin-top:3px; }
+.pb-dot.target { background:linear-gradient(135deg,#E07DBD,#9384FB); border-color:transparent; box-shadow:0 0 0 5px rgba(224,125,189,.18),0 0 18px rgba(224,125,189,.5); }
+.pb-tiny { font-size:9px; font-weight:700; color:rgba(255,255,255,.35); letter-spacing:1.4px; text-transform:uppercase; margin-bottom:3px; }
+.pb-label { font-size:13px; font-weight:500; color:rgba(255,255,255,.88); letter-spacing:-.2px; padding:0 8px; }
+.pb-node.mid .pb-label { color:rgba(255,255,255,.5); font-weight:400; }
+.pb-node.target .pb-label { color:#E07DBD; }
+.pb-foot { display:flex; align-items:center; justify-content:space-between; gap:24px; padding-top:14px; border-top:.5px solid rgba(255,255,255,.08); }
+.pb-prog { display:flex; align-items:center; gap:12px; flex:1; }
+.pb-prog-bar { flex:1; height:4px; border-radius:999px; background:rgba(255,255,255,.1); overflow:hidden; }
+.pb-prog-fill { height:100%; border-radius:999px; background:linear-gradient(90deg,#9384FB,#E07DBD); }
+
+/* APPLYING STATE — role added to banner */
+.pb-applied-role { display:flex; align-items:center; gap:10px; }
+.pb-applied-pill { display:flex; align-items:center; gap:8px; padding:5px 12px 5px 6px; border-radius:999px; background:rgba(224,125,189,.15); border:1px solid rgba(224,125,189,.3); }
+.pb-applied-pill .role-dot { width:8px; height:8px; border-radius:50%; background:#E07DBD; animation: pulse 2.4s ease-in-out infinite; }
+@keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:.4;} }
+.pb-applied-pill .role-text { font-size:11.5px; font-weight:600; color:#E07DBD; }
+.pb-applied-pill .role-co { font-size:11px; color:rgba(255,255,255,.45); font-weight:400; margin-left:2px; }
+.pb-prog-text { font-size:12px; color:rgba(255,255,255,.6); font-weight:500; white-space:nowrap; }
+.pb-prog-text strong { color:#fff; }
+
+/* INNER CARD */
+.inner-card { background:#fff; border:1px solid rgba(16,12,46,.1); border-top:none; border-radius:0 0 18px 18px; overflow:hidden; display:grid; grid-template-columns:220px 1fr; box-shadow:0 1px 2px rgba(16,12,46,.04),0 12px 36px rgba(16,12,46,.1); margin-bottom:20px; }
+
+/* SIDEBAR */
+.sidebar { position:sticky; top:84px; padding:24px 20px; border-right:1px solid rgba(16,12,46,.08); align-self:stretch; min-height:500px; }
+.sidebar-label { font-size:10px; font-weight:700; color:rgba(16,12,46,.38); letter-spacing:1.5px; text-transform:uppercase; margin-bottom:10px; }
+.sidebar-section { margin-bottom:28px; }
+.filter-item { display:flex; align-items:center; justify-content:space-between; padding:8px 12px; border-radius:10px; font-size:13px; font-weight:500; color:rgba(16,12,46,.6); cursor:pointer; transition:all .2s; }
+.filter-item.active { background:rgba(255,255,255,.82); color:var(--navy); font-weight:600; box-shadow:0 1px 4px rgba(16,12,46,.06); }
+.filter-item .count { font-size:11px; color:rgba(16,12,46,.35); background:rgba(16,12,46,.07); padding:1px 7px; border-radius:999px; }
+.filter-item.active .count { background:rgba(83,74,183,.12); color:var(--lav); }
+.filter-divider { height:.5px; background:rgba(16,12,46,.08); margin:6px 0; }
+
+/* CONTENT AREA */
+.content { padding:28px; min-height:600px; }
+.content-head { display:flex; align-items:flex-end; justify-content:space-between; margin-bottom:24px; }
+.content-title { font-size:26px; font-weight:700; color:var(--navy); letter-spacing:-.6px; }
+.opp-count { font-size:13px; color:rgba(16,12,46,.45); font-weight:500; }
+
+/* OPPORTUNITY ROWS */
+.opp-row { display:flex; align-items:flex-start; gap:14px; padding:16px 18px; border-radius:14px; margin-bottom:8px; background:rgba(255,255,255,.6); border:1px solid transparent; cursor:pointer; transition:all .2s; }
+.opp-row:hover { background:rgba(255,255,255,.9); border-color:rgba(16,12,46,.08); }
+.opp-row.selected { background:#fff; border-color:rgba(83,74,183,.35); box-shadow:0 0 0 3px rgba(83,74,183,.08); }
+.opp-logo { width:40px; height:40px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:700; color:#fff; flex-shrink:0; }
+.opp-body { flex:1; }
+.opp-role { font-size:14px; font-weight:600; color:var(--navy); letter-spacing:-.2px; margin-bottom:3px; }
+.opp-co { font-size:12.5px; color:rgba(16,12,46,.55); margin-bottom:8px; }
+.opp-tags { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:8px; }
+.opp-tag { font-size:11px; font-weight:500; color:rgba(16,12,46,.5); background:rgba(16,12,46,.06); padding:3px 9px; border-radius:999px; }
+.opp-why { font-size:12px; color:rgba(16,12,46,.55); line-height:1.5; }
+.opp-match { display:flex; align-items:center; gap:7px; padding:4px 10px; border-radius:999px; font-size:11.5px; font-weight:600; white-space:nowrap; }
+.opp-match.strong { background:rgba(83,74,183,.1); color:var(--lav); }
+.opp-match.stretch { background:rgba(195,102,162,.1); color:var(--pink); }
+.opp-right { display:flex; flex-direction:column; align-items:flex-end; gap:8px; }
+.opp-salary { font-size:12px; color:rgba(16,12,46,.5); font-weight:500; }
+
+/* ACADEMY NUDGE CARD — organic inline promotion */
+.academy-nudge { background:linear-gradient(135deg,rgba(83,74,183,.08),rgba(147,132,251,.05)); border:1px solid rgba(83,74,183,.2); border-radius:14px; padding:18px 20px; margin-bottom:8px; display:flex; align-items:center; gap:16px; }
+.nudge-icon { width:40px; height:40px; border-radius:10px; background:linear-gradient(135deg,#534AB7,#9384FB); display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+.nudge-icon svg { width:20px; height:20px; color:#fff; }
+.nudge-body { flex:1; }
+.nudge-label { font-size:10px; font-weight:700; color:var(--lav); letter-spacing:1.5px; text-transform:uppercase; margin-bottom:4px; }
+.nudge-title { font-size:14px; font-weight:600; color:var(--navy); letter-spacing:-.2px; margin-bottom:3px; }
+.nudge-sub { font-size:12.5px; color:rgba(16,12,46,.55); line-height:1.5; }
+.nudge-cta { font-size:12.5px; font-weight:600; color:var(--lav); display:flex; align-items:center; gap:5px; white-space:nowrap; cursor:pointer; }
+.nudge-cta svg { width:14px; height:14px; }
+
+/* ──── MODAL OVERLAY ──── */
+.modal-overlay { position:fixed; inset:0; background:rgba(16,12,46,.55); backdrop-filter:blur(8px); z-index:200; display:flex; align-items:center; justify-content:center; padding:24px; }
+.modal { background:#F5F2EC; border-radius:22px; width:100%; max-width:720px; max-height:90vh; overflow-y:auto; box-shadow:0 24px 80px rgba(16,12,46,.3); position:relative; }
+.modal::-webkit-scrollbar { width:0; }
+
+/* Modal header */
+.modal-head { padding:28px 32px 0; }
+.modal-close { position:absolute; top:18px; right:18px; width:32px; height:32px; border-radius:50%; background:rgba(16,12,46,.08); border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; color:rgba(16,12,46,.5); }
+.modal-close svg { width:16px; height:16px; }
+.modal-co-row { display:flex; align-items:center; gap:12px; margin-bottom:16px; }
+.modal-logo { width:48px; height:48px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:17px; font-weight:700; color:#fff; }
+.modal-co-info .modal-role { font-size:22px; font-weight:700; color:var(--navy); letter-spacing:-.5px; margin-bottom:4px; }
+.modal-co-info .modal-co { font-size:14px; color:rgba(16,12,46,.55); }
+.modal-tags { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:20px; }
+.modal-tag { font-size:12px; font-weight:500; color:rgba(16,12,46,.55); background:rgba(16,12,46,.07); padding:4px 12px; border-radius:999px; }
+.modal-divider { height:.5px; background:rgba(16,12,46,.08); margin:0 32px; }
+
+/* Modal sections */
+.modal-section { padding:22px 32px; }
+.modal-section-title { font-size:11px; font-weight:700; color:rgba(16,12,46,.4); letter-spacing:1.5px; text-transform:uppercase; margin-bottom:14px; }
+
+/* Skill gap section */
+.skill-gap-header { display:flex; align-items:center; gap:10px; margin-bottom:16px; }
+.skill-gap-badge { font-size:12px; font-weight:700; color:#E07DBD; background:rgba(224,125,189,.12); border:1px solid rgba(224,125,189,.25); padding:4px 12px; border-radius:999px; }
+.skill-gap-sub { font-size:13px; color:rgba(16,12,46,.55); }
+.skill-rows { display:flex; flex-direction:column; gap:10px; margin-bottom:20px; }
+.skill-row { display:flex; align-items:center; gap:12px; }
+.skill-status { width:20px; height:20px; border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+.skill-status.have { background:rgba(29,158,117,.15); }
+.skill-status.have svg { width:11px; height:11px; color:#1D9E75; }
+.skill-status.gap { background:rgba(224,125,189,.12); }
+.skill-status.gap svg { width:11px; height:11px; color:#E07DBD; }
+.skill-name { font-size:13.5px; font-weight:500; color:var(--navy); flex:1; }
+.skill-note { font-size:12px; color:rgba(16,12,46,.45); }
+
+/* Academy recommendation box */
+.academy-rec { background:linear-gradient(135deg,rgba(83,74,183,.1),rgba(147,132,251,.06)); border:1.5px solid rgba(83,74,183,.25); border-radius:16px; padding:20px; margin-top:4px; }
+.academy-rec-header { display:flex; align-items:center; gap:10px; margin-bottom:16px; }
+.academy-rec-icon { width:36px; height:36px; border-radius:9px; background:linear-gradient(135deg,#534AB7,#9384FB); display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+.academy-rec-icon svg { width:18px; height:18px; color:#fff; }
+.academy-rec-label { font-size:10px; font-weight:700; color:var(--lav); letter-spacing:1.5px; text-transform:uppercase; }
+.academy-rec-title { font-size:14px; font-weight:600; color:var(--navy); letter-spacing:-.2px; }
+.rec-modules { display:flex; flex-direction:column; gap:8px; margin-bottom:16px; }
+.rec-module { display:flex; align-items:center; gap:10px; padding:10px 14px; background:rgba(255,255,255,.6); border-radius:10px; border:1px solid rgba(83,74,183,.12); }
+.rec-module-icon { width:28px; height:28px; border-radius:7px; background:linear-gradient(135deg,rgba(83,74,183,.15),rgba(147,132,251,.1)); display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+.rec-module-icon svg { width:14px; height:14px; color:var(--lav); }
+.rec-module-info { flex:1; }
+.rec-module-name { font-size:13px; font-weight:600; color:var(--navy); margin-bottom:2px; }
+.rec-module-meta { font-size:11.5px; color:rgba(16,12,46,.45); }
+.rec-module-tag { font-size:11px; font-weight:600; color:var(--lav); background:rgba(83,74,183,.1); padding:3px 9px; border-radius:999px; white-space:nowrap; }
+.academy-rec-cta { width:100%; padding:12px; border-radius:12px; background:linear-gradient(135deg,#534AB7,#9384FB); border:none; color:#fff; font-family:inherit; font-size:13.5px; font-weight:600; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; transition:opacity .2s; }
+.academy-rec-cta:hover { opacity:.9; }
+.academy-rec-cta svg { width:15px; height:15px; }
+
+/* Modal footer */
+.modal-footer { padding:20px 32px 28px; display:flex; align-items:center; gap:12px; }
+.btn-apply { flex:1; padding:13px 24px; border-radius:12px; background:var(--pink); border:none; color:#fff; font-family:inherit; font-size:14px; font-weight:600; cursor:pointer; transition:opacity .2s; display:flex; align-items:center; justify-content:center; gap:8px; }
+.btn-apply:hover { opacity:.9; }
+.btn-apply svg { width:15px; height:15px; }
+.btn-save { padding:13px 20px; border-radius:12px; background:rgba(16,12,46,.07); border:1px solid rgba(16,12,46,.1); color:rgba(16,12,46,.7); font-family:inherit; font-size:14px; font-weight:600; cursor:pointer; transition:all .2s; display:flex; align-items:center; gap:7px; }
+.btn-save svg { width:15px; height:15px; }
+.modal-footer-note { font-size:12px; color:rgba(16,12,46,.4); text-align:center; margin-top:8px; padding:0 32px 20px; }
+</style>
+</head>
+<body>
+
+<div class="atmos">
+  <div class="p1"></div>
+  <div class="p2"></div>
+  <div class="grain"></div>
+</div>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-logo">
+    <svg width="90" height="22" viewBox="0 0 90 22" fill="none">
+      <rect width="22" height="22" rx="6" fill="#534AB7"/>
+      <path d="M7 11 L11 7 L15 11 L11 15 Z" fill="white" opacity=".9"/>
+      <path d="M11 7 L15 11 L11 15" fill="none" stroke="white" stroke-width="1.5"/>
+      <text x="28" y="15.5" font-family="Plus Jakarta Sans" font-size="13" font-weight="700" fill="#100C2E">freeway</text>
+    </svg>
+  </div>
+  <div class="nav-dock">
+    <div class="nav-tab">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+      <span>Home</span>
+    </div>
+    <div class="nav-tab active">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.35-4.35"/></svg>
+      <span>Opportunities</span>
+    </div>
+    <div class="nav-tab">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+      <span>Academy</span>
+    </div>
+    <div class="nav-tab">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      <span>Network</span>
+    </div>
+    <div class="nav-tab dim"><span>Services</span></div>
+    <div class="nav-tab dim"><span>Coach</span></div>
+  </div>
+  <div class="nav-right">
+    <div class="nav-search">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.35-4.35"/></svg>
+      Search roles, skills, companies…
+    </div>
+    <div class="nav-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+      <div class="pip"></div>
+    </div>
+    <div class="nav-av">
+      <div class="av">D</div>
+      <span class="avname">Daniela</span>
+    </div>
+  </div>
+</nav>
+
+<!-- PAGE -->
+<div class="workspace">
+
+  <!-- CAREER PATH BANNER — with applied role showing in progress bar -->
+  <div class="path-banner">
+    <div class="pb-inner">
+      <div class="pb-eyebrow">Your opportunity path</div>
+      <div class="pb-flow">
+        <div class="pb-node">
+          <div class="pb-dot"></div>
+          <div class="pb-tiny">Where you are</div>
+          <div class="pb-label">Senior Ops Lead</div>
+        </div>
+        <div class="pb-node mid">
+          <div class="pb-dot mid"></div>
+          <div class="pb-tiny">Building toward</div>
+          <div class="pb-label">Product &amp; Strategy</div>
+        </div>
+        <div class="pb-node target">
+          <div class="pb-dot target"></div>
+          <div class="pb-tiny">Target</div>
+          <div class="pb-label">Head of Product</div>
+        </div>
+      </div>
+      <div class="pb-foot">
+        <div class="pb-prog">
+          <div class="pb-prog-bar"><div class="pb-prog-fill" style="width:38%"></div></div>
+          <div class="pb-prog-text"><strong>38%</strong> toward target profile</div>
+        </div>
+        <!-- Applied role pill appears after hitting Apply in modal -->
+        <div class="pb-applied-role">
+          <div class="pb-applied-pill">
+            <div class="role-dot"></div>
+            <span class="role-text">Head of Product</span>
+            <span class="role-co">· Lyra Health</span>
+          </div>
+          <div class="pb-prog-text" style="margin-left:6px">applied</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- INNER CARD -->
+  <div class="inner-card">
+
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+      <div class="sidebar-section">
+        <div class="sidebar-label">Role Type</div>
+        <div class="filter-item active">All roles <span class="count">47</span></div>
+        <div class="filter-item">Product <span class="count">14</span></div>
+        <div class="filter-item">Strategy <span class="count">9</span></div>
+        <div class="filter-item">Operations <span class="count">12</span></div>
+        <div class="filter-item">Founder <span class="count">6</span></div>
+        <div class="filter-item">Advisor <span class="count">6</span></div>
+      </div>
+      <div class="filter-divider"></div>
+      <div class="sidebar-section" style="margin-top:18px">
+        <div class="sidebar-label">Stage</div>
+        <div class="filter-item">Seed <span class="count">11</span></div>
+        <div class="filter-item active">Series A <span class="count">18</span></div>
+        <div class="filter-item">Series B+ <span class="count">12</span></div>
+        <div class="filter-item">Growth <span class="count">6</span></div>
+      </div>
+      <div class="filter-divider"></div>
+      <div class="sidebar-section" style="margin-top:18px">
+        <div class="sidebar-label">Match</div>
+        <div class="filter-item">Strong match <span class="count">8</span></div>
+        <div class="filter-item">Good match <span class="count">22</span></div>
+        <div class="filter-item">Stretch <span class="count">17</span></div>
+      </div>
+    </div>
+
+    <!-- CONTENT -->
+    <div class="content">
+      <div class="content-head">
+        <div>
+          <div class="content-title">Opportunities</div>
+          <div class="opp-count">47 matched to your profile</div>
+        </div>
+      </div>
+
+      <!-- ACADEMY ORGANIC NUDGE — inline, between rows -->
+      <div class="academy-nudge">
+        <div class="nudge-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+        </div>
+        <div class="nudge-body">
+          <div class="nudge-label">Academy</div>
+          <div class="nudge-title">Close the gap on 3 roles you're almost ready for</div>
+          <div class="nudge-sub">Building product strategy fundamentals could move you from stretch to strong match on 3 open roles right now.</div>
+        </div>
+        <div class="nudge-cta">
+          Explore Academy
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </div>
+      </div>
+
+      <!-- OPP ROWS -->
+      <div class="opp-row selected">
+        <div class="opp-logo" style="background:linear-gradient(135deg,#534AB7,#9384FB)">LH</div>
+        <div class="opp-body">
+          <div class="opp-role">Head of Product</div>
+          <div class="opp-co">Lyra Health · Series C</div>
+          <div class="opp-tags">
+            <span class="opp-tag">Product</span>
+            <span class="opp-tag">Series C</span>
+            <span class="opp-tag">Remote</span>
+          </div>
+          <div class="opp-why">Matches your ops-to-product transition and experience with cross-functional teams.</div>
+        </div>
+        <div class="opp-right">
+          <span class="opp-match stretch">Stretch match</span>
+          <span class="opp-salary">$170–210k</span>
+        </div>
+      </div>
+
+      <div class="opp-row">
+        <div class="opp-logo" style="background:linear-gradient(135deg,#1D9E75,#0F6E56)">AR</div>
+        <div class="opp-body">
+          <div class="opp-role">VP of Operations</div>
+          <div class="opp-co">Arculus · Series A</div>
+          <div class="opp-tags">
+            <span class="opp-tag">Operations</span>
+            <span class="opp-tag">Series A</span>
+            <span class="opp-tag">NYC</span>
+          </div>
+          <div class="opp-why">Your background maps directly to this org structure and growth stage.</div>
+        </div>
+        <div class="opp-right">
+          <span class="opp-match strong">Strong match</span>
+          <span class="opp-salary">$145–175k</span>
+        </div>
+      </div>
+
+      <div class="opp-row">
+        <div class="opp-logo" style="background:linear-gradient(135deg,#E07DBD,#C366A2)">NV</div>
+        <div class="opp-body">
+          <div class="opp-role">Chief of Staff → GM</div>
+          <div class="opp-co">Novum · Seed</div>
+          <div class="opp-tags">
+            <span class="opp-tag">Strategy</span>
+            <span class="opp-tag">Seed</span>
+            <span class="opp-tag">SF</span>
+          </div>
+          <div class="opp-why">Founder-adjacent role, built for operators becoming builders.</div>
+        </div>
+        <div class="opp-right">
+          <span class="opp-match strong">Strong match</span>
+          <span class="opp-salary">$130–160k + equity</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ─── MODAL OVERLAY ─── -->
+<div class="modal-overlay">
+  <div class="modal">
+
+    <!-- MODAL HEADER -->
+    <div class="modal-head">
+      <button class="modal-close">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+      <div class="modal-co-row">
+        <div class="modal-logo" style="background:linear-gradient(135deg,#534AB7,#9384FB)">LH</div>
+        <div class="modal-co-info">
+          <div class="modal-role">Head of Product</div>
+          <div class="modal-co">Lyra Health · Series C · Remote · $170–210k</div>
+        </div>
+      </div>
+      <div class="modal-tags">
+        <span class="modal-tag">Product</span>
+        <span class="modal-tag">Series C</span>
+        <span class="modal-tag">Remote</span>
+        <span class="modal-tag">Full-time</span>
+        <span class="modal-tag">Posted 3 days ago</span>
+      </div>
+    </div>
+
+    <div class="modal-divider"></div>
+
+    <!-- SKILL GAP SECTION -->
+    <div class="modal-section">
+      <div class="modal-section-title">Skill readiness</div>
+      <div class="skill-gap-header">
+        <div class="skill-gap-badge">2 skills to close</div>
+        <div class="skill-gap-sub">You're close — build these and this becomes a strong match.</div>
+      </div>
+      <div class="skill-rows">
+        <div class="skill-row">
+          <div class="skill-status have">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
+          </div>
+          <div class="skill-name">Cross-functional team leadership</div>
+          <div class="skill-note">You have this</div>
+        </div>
+        <div class="skill-row">
+          <div class="skill-status have">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
+          </div>
+          <div class="skill-name">Roadmap ownership</div>
+          <div class="skill-note">You have this</div>
+        </div>
+        <div class="skill-row">
+          <div class="skill-status gap">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 8v4m0 4h.01M22 12A10 10 0 1 1 2 12a10 10 0 0 1 20 0z"/></svg>
+          </div>
+          <div class="skill-name">Product strategy frameworks</div>
+          <div class="skill-note">Not yet on your profile</div>
+        </div>
+        <div class="skill-row">
+          <div class="skill-status gap">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 8v4m0 4h.01M22 12A10 10 0 1 1 2 12a10 10 0 0 1 20 0z"/></svg>
+          </div>
+          <div class="skill-name">Stakeholder alignment at exec level</div>
+          <div class="skill-note">Not yet on your profile</div>
+        </div>
+      </div>
+
+      <!-- ACADEMY RECOMMENDATION BOX -->
+      <div class="academy-rec">
+        <div class="academy-rec-header">
+          <div class="academy-rec-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+          </div>
+          <div>
+            <div class="academy-rec-label">Recommended in Academy</div>
+            <div class="academy-rec-title">2 modules will close this gap</div>
+          </div>
+        </div>
+        <div class="rec-modules">
+          <div class="rec-module">
+            <div class="rec-module-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19v-6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2zm0 0V9a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v10m-6 0a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2m0 0V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-2a2 2 0 0 1-2-2z"/></svg>
+            </div>
+            <div class="rec-module-info">
+              <div class="rec-module-name">Product Strategy Foundations</div>
+              <div class="rec-module-meta">4 sessions · ~3 hours total</div>
+            </div>
+            <div class="rec-module-tag">Closes gap</div>
+          </div>
+          <div class="rec-module">
+            <div class="rec-module-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            </div>
+            <div class="rec-module-info">
+              <div class="rec-module-name">Exec Stakeholder Alignment</div>
+              <div class="rec-module-meta">2 sessions · ~90 mins total</div>
+            </div>
+            <div class="rec-module-tag">Closes gap</div>
+          </div>
+        </div>
+        <button class="academy-rec-cta">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+          Go to Academy — enroll in these modules
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="modal-divider"></div>
+
+    <!-- MODAL FOOTER -->
+    <div class="modal-footer">
+      <button class="btn-save">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+        Save
+      </button>
+      <button class="btn-apply">
+        Apply to this role
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </button>
+    </div>
+    <div class="modal-footer-note">Applying adds this role to your opportunity path and enrolls you in recommended Academy modules.</div>
+
+  </div>
+</div>
+
+</body>
+</html>

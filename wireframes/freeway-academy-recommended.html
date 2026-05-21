@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Freeway — Academy (Recommended State)</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { min-height: 100vh; }
+body { font-family: 'Plus Jakarta Sans', sans-serif; background: #EEEBE4; color: #100C2E; overflow-x: hidden; }
+:root { --navy:#100C2E; --lav:#534AB7; --lav-lt:#9384FB; --green:#1D9E75; --cream:#F5F2EC; --pink:#C366A2; --pink-lt:#E07DBD; }
+
+/* ATMOS */
+.atmos { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+.atmos .p1 { position: absolute; top: -30%; right: -15%; width: 900px; height: 900px; border-radius: 50%; background: radial-gradient(circle, rgba(147,132,251,.1) 0%, transparent 65%); filter: blur(70px); }
+.atmos .p2 { position: absolute; bottom: -25%; left: -12%; width: 750px; height: 750px; border-radius: 50%; background: radial-gradient(circle, rgba(83,74,183,.07) 0%, transparent 60%); filter: blur(70px); }
+.atmos .grain { position: absolute; inset: 0; opacity: .2; background-image: radial-gradient(circle at 1px 1px, rgba(32,23,92,.02) 1px, transparent 0); background-size: 3px 3px; }
+
+/* NAV */
+.nav { position: sticky; top: 0; z-index: 100; display: flex; align-items: center; justify-content: space-between; padding: 16px 48px; background: rgba(238,235,228,.92); backdrop-filter: blur(30px); border-bottom: 1px solid rgba(16,12,46,.08); }
+.nav-logo img { height: 22px; }
+.nav-dock { display: flex; gap: 2px; padding: 4px; border-radius: 999px; background: rgba(255,255,255,.6); border: 1px solid rgba(16,12,46,.08); }
+.nav-tab { display: flex; align-items: center; gap: 6px; padding: 7px 14px; border-radius: 999px; font-size: 12.5px; font-weight: 500; color: rgba(16,12,46,.48); cursor: pointer; transition: all .2s; }
+.nav-tab svg { width: 14px; height: 14px; opacity: .55; }
+.nav-tab.active { background: #fff; color: #100C2E; box-shadow: 0 1px 4px rgba(16,12,46,.08); }
+.nav-tab.active svg { opacity: 1; }
+.nav-tab.dim { opacity: .3; pointer-events: none; }
+.nav-right { display: flex; align-items: center; gap: 8px; }
+.nav-search { display: flex; align-items: center; gap: 8px; height: 34px; padding: 0 14px; border-radius: 999px; background: rgba(255,255,255,.55); border: 1px solid rgba(16,12,46,.08); font-size: 12.5px; color: rgba(16,12,46,.42); }
+.nav-search svg { width: 13px; height: 13px; }
+.nav-icon { width: 34px; height: 34px; border-radius: 50%; background: rgba(255,255,255,.55); border: 1px solid rgba(16,12,46,.08); display: flex; align-items: center; justify-content: center; color: rgba(16,12,46,.5); position: relative; cursor: pointer; }
+.nav-icon svg { width: 15px; height: 15px; }
+.nav-icon .pip { position: absolute; top: 6px; right: 6px; width: 7px; height: 7px; border-radius: 50%; background: var(--lav-lt); border: 1.5px solid #EEEBE4; }
+.nav-av { display: flex; align-items: center; gap: 8px; padding: 4px 12px 4px 4px; border-radius: 999px; background: rgba(255,255,255,.55); border: 1px solid rgba(16,12,46,.08); cursor: pointer; }
+.nav-av .av { width: 26px; height: 26px; border-radius: 50%; background: linear-gradient(135deg,#9384FB,#534AB7); display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; color: #fff; }
+.nav-av .avname { font-size: 12.5px; font-weight: 500; }
+
+/* WORKSPACE */
+.workspace { position: relative; z-index: 1; max-width: 1220px; margin: 0 auto; padding: 36px 48px 80px; }
+
+/* INNER CARD — sidebar + content */
+.inner-card { display: grid; grid-template-columns: 220px 1fr; background: #fff; border-radius: 20px; border: 1px solid rgba(16,12,46,.1); box-shadow: 0 1px 2px rgba(16,12,46,.04), 0 8px 28px rgba(16,12,46,.07); overflow: hidden; margin-bottom: 20px; }
+
+/* SIDEBAR */
+.sidebar { position: sticky; top: 84px; padding: 24px 20px; border-right: 1px solid rgba(16,12,46,.08); align-self: stretch; min-height: 600px; }
+.sidebar-label { font-size: 10px; font-weight: 700; color: rgba(16,12,46,.38); letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 10px; }
+.sidebar-section { margin-bottom: 24px; }
+.filter-item { display: flex; align-items: center; justify-content: space-between; padding: 8px 12px; border-radius: 10px; font-size: 13px; font-weight: 500; color: rgba(16,12,46,.6); cursor: pointer; transition: all .2s; }
+.filter-item.active { background: rgba(255,255,255,.82); color: var(--navy); font-weight: 600; box-shadow: 0 1px 4px rgba(16,12,46,.06); }
+.filter-item .count { font-size: 11px; color: rgba(16,12,46,.35); background: rgba(16,12,46,.07); padding: 1px 7px; border-radius: 999px; }
+.filter-item.active .count { background: rgba(83,74,183,.12); color: var(--lav); }
+.filter-divider { height: .5px; background: rgba(16,12,46,.08); margin: 6px 0; }
+
+/* Opportunity tracker in sidebar */
+.sidebar-opp-tracker { background: linear-gradient(135deg,rgba(83,74,183,.08),rgba(147,132,251,.04)); border: 1px solid rgba(83,74,183,.18); border-radius: 12px; padding: 14px; margin-bottom: 20px; }
+.sot-label { font-size: 10px; font-weight: 700; color: var(--lav); letter-spacing: 1.3px; text-transform: uppercase; margin-bottom: 10px; }
+.sot-role { font-size: 13px; font-weight: 600; color: var(--navy); margin-bottom: 2px; }
+.sot-co { font-size: 12px; color: rgba(16,12,46,.5); margin-bottom: 10px; }
+.sot-prog-bar { height: 4px; border-radius: 999px; background: rgba(16,12,46,.08); overflow: hidden; margin-bottom: 6px; }
+.sot-prog-fill { height: 100%; border-radius: 999px; background: linear-gradient(90deg,#9384FB,#E07DBD); width: 0%; transition: width 1s ease; }
+.sot-meta { font-size: 11.5px; color: rgba(16,12,46,.45); }
+.sot-meta strong { color: var(--lav); }
+
+/* CONTENT AREA */
+.content { padding: 28px 32px; min-height: 600px; }
+.content-head { margin-bottom: 28px; }
+.content-title { font-size: 26px; font-weight: 700; color: var(--navy); letter-spacing: -.6px; margin-bottom: 4px; }
+.content-sub { font-size: 14px; color: rgba(16,12,46,.5); }
+
+/* SECTION HEADING */
+.section-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; margin-top: 28px; }
+.section-title { font-size: 13px; font-weight: 700; color: var(--navy); letter-spacing: -.1px; }
+.section-link { font-size: 12.5px; font-weight: 600; color: var(--pink); display: flex; align-items: center; gap: 4px; cursor: pointer; }
+.section-link svg { width: 13px; height: 13px; }
+
+/* MODULE GRID */
+.module-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+/* STANDARD MODULE CARD */
+.module-card { background: rgba(255,255,255,.7); border: 1px solid rgba(16,12,46,.08); border-radius: 16px; padding: 20px; cursor: pointer; transition: all .25s; position: relative; overflow: hidden; }
+.module-card:hover { background: rgba(255,255,255,.9); border-color: rgba(16,12,46,.12); box-shadow: 0 4px 16px rgba(16,12,46,.06); }
+
+/* RECOMMENDED MODULE — glowing outline state */
+.module-card.recommended {
+  background: rgba(255,255,255,.95);
+  border: 2px solid var(--lav);
+  box-shadow:
+    0 0 0 4px rgba(83,74,183,.1),
+    0 0 24px rgba(83,74,183,.2),
+    0 4px 20px rgba(16,12,46,.08);
+  animation: moduleGlow 3s ease-in-out infinite;
+}
+@keyframes moduleGlow {
+  0%, 100% { box-shadow: 0 0 0 4px rgba(83,74,183,.1), 0 0 24px rgba(83,74,183,.2), 0 4px 20px rgba(16,12,46,.08); }
+  50% { box-shadow: 0 0 0 5px rgba(83,74,183,.18), 0 0 36px rgba(83,74,183,.3), 0 4px 20px rgba(16,12,46,.08); }
+}
+
+/* Recommended badge */
+.rec-badge { position: absolute; top: 14px; right: 14px; display: flex; align-items: center; gap: 5px; background: linear-gradient(135deg,#534AB7,#9384FB); color: #fff; font-size: 10px; font-weight: 700; letter-spacing: .8px; text-transform: uppercase; padding: 4px 10px; border-radius: 999px; }
+.rec-badge svg { width: 10px; height: 10px; }
+.rec-badge .rec-dot { width: 6px; height: 6px; border-radius: 50%; background: #E07DBD; animation: pulse 2.4s ease-in-out infinite; }
+@keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:.4;} }
+
+/* For-role tag under recommended badge */
+.for-role-tag { display: inline-flex; align-items: center; gap: 6px; background: rgba(83,74,183,.08); border: 1px solid rgba(83,74,183,.18); border-radius: 8px; padding: 5px 10px; margin-bottom: 12px; font-size: 11.5px; color: var(--lav); font-weight: 500; }
+.for-role-tag svg { width: 12px; height: 12px; }
+
+.module-icon { width: 38px; height: 38px; border-radius: 10px; display: flex; align-items: center; justify-content: center; margin-bottom: 14px; }
+.module-icon svg { width: 19px; height: 19px; }
+.module-name { font-size: 15px; font-weight: 700; color: var(--navy); letter-spacing: -.3px; margin-bottom: 5px; }
+.module-desc { font-size: 12.5px; color: rgba(16,12,46,.55); line-height: 1.5; margin-bottom: 14px; }
+.module-meta { display: flex; align-items: center; gap: 12px; }
+.module-sessions { font-size: 11.5px; color: rgba(16,12,46,.45); font-weight: 500; }
+.module-cta { font-size: 12.5px; font-weight: 600; color: var(--lav); display: flex; align-items: center; gap: 4px; cursor: pointer; margin-left: auto; }
+.module-cta svg { width: 13px; height: 13px; }
+
+/* recommended module CTA is pink */
+.module-card.recommended .module-cta { color: var(--pink); }
+
+/* Progress bar on module (enrolled) */
+.module-progress { margin-top: 12px; }
+.module-prog-bar { height: 3px; border-radius: 999px; background: rgba(16,12,46,.08); overflow: hidden; }
+.module-prog-fill { height: 100%; border-radius: 999px; }
+.module-prog-text { font-size: 11px; color: rgba(16,12,46,.4); margin-top: 4px; }
+
+/* ENROLL CTA on recommended card */
+.module-enroll-btn { width: 100%; margin-top: 14px; padding: 10px; border-radius: 10px; background: linear-gradient(135deg,#534AB7,#9384FB); border: none; color: #fff; font-family: inherit; font-size: 13px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 7px; transition: opacity .2s; }
+.module-enroll-btn:hover { opacity: .9; }
+.module-enroll-btn svg { width: 14px; height: 14px; }
+</style>
+</head>
+<body>
+
+<div class="atmos">
+  <div class="p1"></div>
+  <div class="p2"></div>
+  <div class="grain"></div>
+</div>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-logo">
+    <svg width="90" height="22" viewBox="0 0 90 22" fill="none">
+      <rect width="22" height="22" rx="6" fill="#534AB7"/>
+      <path d="M7 11 L11 7 L15 11 L11 15 Z" fill="white" opacity=".9"/>
+      <path d="M11 7 L15 11 L11 15" fill="none" stroke="white" stroke-width="1.5"/>
+      <text x="28" y="15.5" font-family="Plus Jakarta Sans" font-size="13" font-weight="700" fill="#100C2E">freeway</text>
+    </svg>
+  </div>
+  <div class="nav-dock">
+    <div class="nav-tab">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+      <span>Home</span>
+    </div>
+    <div class="nav-tab">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.35-4.35"/></svg>
+      <span>Opportunities</span>
+    </div>
+    <div class="nav-tab active">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+      <span>Academy</span>
+    </div>
+    <div class="nav-tab">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      <span>Network</span>
+    </div>
+    <div class="nav-tab dim"><span>Services</span></div>
+    <div class="nav-tab dim"><span>Coach</span></div>
+  </div>
+  <div class="nav-right">
+    <div class="nav-search">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.35-4.35"/></svg>
+      Search modules, skills…
+    </div>
+    <div class="nav-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+      <div class="pip"></div>
+    </div>
+    <div class="nav-av">
+      <div class="av">D</div>
+      <span class="avname">Daniela</span>
+    </div>
+  </div>
+</nav>
+
+<!-- PAGE -->
+<div class="workspace">
+  <div class="inner-card">
+
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+
+      <!-- Opportunity tracker — carried over from application -->
+      <div class="sidebar-opp-tracker">
+        <div class="sot-label">Applied Role</div>
+        <div class="sot-role">Head of Product</div>
+        <div class="sot-co">Lyra Health · Series C</div>
+        <div class="sot-prog-bar"><div class="sot-prog-fill" style="width:15%"></div></div>
+        <div class="sot-meta"><strong>2 modules</strong> recommended to close skill gap</div>
+      </div>
+
+      <div class="sidebar-section">
+        <div class="sidebar-label">Browse</div>
+        <div class="filter-item active">All modules <span class="count">24</span></div>
+        <div class="filter-item">Enrolled <span class="count">2</span></div>
+        <div class="filter-item">Completed <span class="count">1</span></div>
+      </div>
+      <div class="filter-divider"></div>
+      <div class="sidebar-section" style="margin-top:16px">
+        <div class="sidebar-label">Topic</div>
+        <div class="filter-item">Product <span class="count">6</span></div>
+        <div class="filter-item">Strategy <span class="count">5</span></div>
+        <div class="filter-item">Leadership <span class="count">7</span></div>
+        <div class="filter-item">Fundraising <span class="count">3</span></div>
+        <div class="filter-item">Ops &amp; Systems <span class="count">3</span></div>
+      </div>
+    </div>
+
+    <!-- CONTENT -->
+    <div class="content">
+      <div class="content-head">
+        <div class="content-title">Academy</div>
+        <div class="content-sub">Who are you becoming?</div>
+      </div>
+
+      <!-- RECOMMENDED FOR YOUR ROLE — section -->
+      <div class="section-head" style="margin-top:0">
+        <div class="section-title">Recommended for Head of Product · Lyra Health</div>
+        <div class="section-link">
+          View role
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </div>
+      </div>
+
+      <div class="module-grid">
+
+        <!-- RECOMMENDED MODULE 1 — glowing -->
+        <div class="module-card recommended">
+          <div class="rec-badge">
+            <div class="rec-dot"></div>
+            Recommended
+          </div>
+          <div class="for-role-tag">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.35-4.35"/></svg>
+            Closes skill gap for this role
+          </div>
+          <div class="module-icon" style="background:linear-gradient(135deg,rgba(83,74,183,.15),rgba(147,132,251,.1))">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#534AB7" stroke-width="2"><path d="M9 19v-6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2zm0 0V9a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v10m-6 0a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2m0 0V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-2a2 2 0 0 1-2-2z"/></svg>
+          </div>
+          <div class="module-name">Product Strategy Foundations</div>
+          <div class="module-desc">Learn the frameworks product leaders use to align teams, prioritize ruthlessly, and build for outcomes — not output.</div>
+          <div class="module-meta">
+            <span class="module-sessions">4 sessions · ~3 hrs</span>
+            <div class="module-cta">
+              Start
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </div>
+          </div>
+          <button class="module-enroll-btn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+            Enroll now
+          </button>
+        </div>
+
+        <!-- RECOMMENDED MODULE 2 — glowing -->
+        <div class="module-card recommended">
+          <div class="rec-badge">
+            <div class="rec-dot"></div>
+            Recommended
+          </div>
+          <div class="for-role-tag">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.35-4.35"/></svg>
+            Closes skill gap for this role
+          </div>
+          <div class="module-icon" style="background:linear-gradient(135deg,rgba(83,74,183,.15),rgba(147,132,251,.1))">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#534AB7" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          </div>
+          <div class="module-name">Exec Stakeholder Alignment</div>
+          <div class="module-desc">Navigate C-suite dynamics, build cross-functional trust, and get buy-in on the things that actually matter.</div>
+          <div class="module-meta">
+            <span class="module-sessions">2 sessions · ~90 mins</span>
+            <div class="module-cta">
+              Start
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </div>
+          </div>
+          <button class="module-enroll-btn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+            Enroll now
+          </button>
+        </div>
+
+      </div>
+
+      <!-- EXPLORE MORE -->
+      <div class="section-head">
+        <div class="section-title">Explore all modules</div>
+        <div class="section-link">
+          See all
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </div>
+      </div>
+
+      <div class="module-grid">
+        <div class="module-card">
+          <div class="module-icon" style="background:linear-gradient(135deg,rgba(29,158,117,.12),rgba(15,110,86,.06))">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#1D9E75" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          </div>
+          <div class="module-name">From Operator to Founder</div>
+          <div class="module-desc">Map your ops experience to founder competencies and identify where you're already there.</div>
+          <div class="module-meta">
+            <span class="module-sessions">3 sessions · ~2 hrs</span>
+            <div class="module-cta">
+              Explore
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </div>
+          </div>
+        </div>
+
+        <div class="module-card">
+          <div class="module-icon" style="background:linear-gradient(135deg,rgba(195,102,162,.12),rgba(224,125,189,.06))">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#C366A2" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+          </div>
+          <div class="module-name">Reading the Market</div>
+          <div class="module-desc">Understand how the ecosystem classifies your profile and where the signal is strongest.</div>
+          <div class="module-meta">
+            <span class="module-sessions">2 sessions · ~75 mins</span>
+            <div class="module-cta">
+              Explore
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
