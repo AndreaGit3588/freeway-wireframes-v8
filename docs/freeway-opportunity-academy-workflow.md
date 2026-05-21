@@ -73,10 +73,10 @@ A scannable checklist showing matched vs. missing skills:
 
 **Academy Recommendation Box** (lavender-tinted, below skill rows)
 
-- Lavender gradient icon + label: `RECOMMENDED IN ACADEMY`
-- Title: "X modules will close this gap"
-- Module list: each module shows icon, name, session count, and a `Closes gap` pill
-- Primary CTA button (full width, lavender gradient): "Go to Academy — enroll in these modules →"
+- Lavender gradient icon + label: `RECOMMENDED BOOTCAMP`
+- Title: "This bootcamp closes the gap"
+- One bootcamp shown (the recommended one based on the role) with a `Recommended` pill
+- Primary CTA button (full width, lavender gradient): "Go to Academy — enroll in this bootcamp →"
 
 **Footer**
 
@@ -88,7 +88,7 @@ A scannable checklist showing matched vs. missing skills:
 
 1. Modal closes
 2. Applied role pill appears in the career path banner progress bar (pulsing dot + role name + company)
-3. User is enrolled in the recommended Academy modules
+3. User is enrolled in the recommended bootcamp
 4. Academy tab shows a notification pip
 
 ---
@@ -103,16 +103,22 @@ An **Opportunity Tracker** card appears at the top of the sidebar above the filt
 
 - Label: `APPLIED ROLE`
 - Role name + company
-- Progress bar (starts near 0%, fills as modules are completed)
-- Meta: "X modules recommended to close skill gap"
+- Progress bar (starts near 0%, fills as bootcamp is completed)
+- Meta: "1 bootcamp recommended to close skill gap"
 
-### Recommended Modules (top section)
+### The Two Bootcamps
 
-Section header: "Recommended for [Role Title] · [Company]" with a "View role →" link in pink on the right.
+Both bootcamps appear in a 2-column grid. Only one is recommended per role — the system routes the user to whichever is the better fit. The other is always visible but quiet.
 
-Recommended modules appear in a 2-column grid **above** all other modules. Each recommended card has:
+**Bootcamp 1: Startup Rules, Scales and Engine**
+How startups operate, scale, and win. Recommended for roles that require product leadership, scaling experience, or operational strategy at a growing company.
 
-**Visual treatment — glowing outline:**
+**Bootcamp 2: MVP and Capital Raising**
+Build something people want and find the people who will back it. Recommended for roles with a founding or early-stage angle — chief of staff, operator-to-founder transitions, seed/series A companies.
+
+### Recommended Bootcamp Card (glowing state)
+
+**Visual treatment:**
 ```css
 border: 2px solid #534AB7;
 box-shadow:
@@ -123,13 +129,13 @@ animation: moduleGlow 3s ease-in-out infinite;
 
 **Badge:** Top-right corner — pulsing pink dot + `RECOMMENDED` label on lavender gradient pill
 
-**Tag below badge:** "Closes skill gap for this role" in lavender, with a search icon
+**Tag below badge:** "Closes skill gap for this role" in lavender
 
-**Enroll button:** Full-width lavender gradient button at the bottom of the card — "Enroll now"
+**Enroll button:** Full-width lavender gradient button — "Enroll in this bootcamp"
 
-### Other Modules
+### Second Bootcamp (land and expand)
 
-Standard modules appear below in the same grid with no special treatment. They are still browsable and accessible — recommended modules don't gate anything.
+The non-recommended bootcamp sits in the same grid with no glow. Labeled "Available after Bootcamp 1" — visible, accessible, not pushed. Once the user completes the first bootcamp, the second one activates fully and surfaces as the next natural step.
 
 ---
 
@@ -140,7 +146,7 @@ Standard modules appear below in the same grid with no special treatment. They a
 3. **Academy is a path, not a requirement** — "Go to Academy" is always a CTA, never a gate to applying
 4. **Apply is always accessible** — users can apply without going to Academy. The note below the button explains enrollment happens automatically on apply.
 5. **Glow is calm** — the module glow animation is 3s ease-in-out. Not flashing, not urgent. It draws the eye without shouting.
-6. **One recommended section, not scattered** — all recommended modules group together at the top. Once enrolled, they move to an "Enrolled" filter in the sidebar.
+6. **One bootcamp recommended at a time** — never show both as equally recommended. Route to one, surface the other passively. Land and expand: complete Bootcamp 1, then Bootcamp 2 activates.
 7. **Pink stays on interaction** — Apply button, "View role" link, "Go to Academy" CTA are pink. The recommendation box and module highlights are lavender (system signal).
 
 ---
@@ -149,6 +155,6 @@ Standard modules appear below in the same grid with no special treatment. They a
 
 - Skill gap label: "X skills to close" not "missing X skills"
 - Academy nudge headline: "Close the gap on roles you're almost ready for" not "Improve your profile"
-- Enroll CTA: "Enroll now" not "Start learning" or "Unlock"
+- Enroll CTA: "Enroll in this bootcamp" not "Start learning" or "Unlock"
 - Apply note: "Applying adds this role to your opportunity path" — ownership language, not tracking language
 - Academy section header: "Recommended for [Role]" not "Skills needed for [Role]"
